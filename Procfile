@@ -1,1 +1,1 @@
-web: gunicorn BackendDistribuidora.wsgi --log-file -
+web: gunicorn MagicHolidays.wsgi --log-file -
