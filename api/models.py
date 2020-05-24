@@ -6,6 +6,8 @@ class user_type(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.description)   
 
 class country(models.Model):
     description =  models.CharField(max_length=50)
@@ -13,6 +15,8 @@ class country(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.description)   
 
 class user(models.Model):
     user_type =  models.ForeignKey(user_type, related_name='rel_user_userType', on_delete=models.PROTECT)
@@ -25,12 +29,16 @@ class user(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.mail)   
 
 class supplier(models.Model):
     description =  models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.description)   
 
 class product_category(models.Model):
     supplier =  models.ForeignKey(supplier, related_name='rel_productCategory_supplier', on_delete=models.PROTECT)
@@ -38,6 +46,8 @@ class product_category(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.description)   
 
 class product(models.Model):
     product_category =  models.ForeignKey(product_category, related_name='rel_product_productCategory', on_delete=models.PROTECT)
@@ -45,6 +55,8 @@ class product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.description)   
 
 class customer(models.Model):
     fullname =  models.CharField(max_length=150)
@@ -54,6 +66,8 @@ class customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.fullname)   
 
 class payment(models.Model):
     prepaidDate = models.DateTimeField(null=True)
