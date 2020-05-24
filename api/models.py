@@ -1,0 +1,87 @@
+from django.db import models
+from django.contrib.auth.models import User
+
+class user_type(models.Model):
+    description =  models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+
+class country(models.Model):
+    description =  models.CharField(max_length=50)
+    lang =  models.CharField(max_length=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+
+class user(models.Model):
+    user_type =  models.ForeignKey(user_type, related_name='rel_user_userType', on_delete=models.PROTECT)
+    country =  models.ForeignKey(country, related_name='rel_user_country', on_delete=models.PROTECT)
+    password =  models.CharField(max_length=256)
+    name =  models.CharField(max_length=60)
+    lastname =  models.CharField(max_length=60)
+    mail =  models.CharField(max_length=100)
+    phone =  models.CharField(max_length=80)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+
+class supplier(models.Model):
+    description =  models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+
+class product_category(models.Model):
+    supplier =  models.ForeignKey(supplier, related_name='rel_productCategory_supplier', on_delete=models.PROTECT)
+    description =  models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+
+class product(models.Model):
+    product_category =  models.ForeignKey(product_category, related_name='rel_product_productCategory', on_delete=models.PROTECT)
+    description =  models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+
+class customer(models.Model):
+    fullname =  models.CharField(max_length=150)
+    mail =  models.CharField(max_length=100)
+    phone =  models.CharField(max_length=80)
+    country =  models.ForeignKey(country, related_name='rel_customer_country', on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+
+class payment(models.Model):
+    prepaidDate = models.DateTimeField(null=True)
+    payDate = models.DateTimeField(null=True)
+    cancelationDate = models.DateTimeField(null=True)
+    transactionNumber =  models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)    
+    deleted_at = models.DateTimeField(null=True)
+
+class rez(models.Model):
+    product =  models.ForeignKey(product, related_name='rel_rez_product', on_delete=models.PROTECT)
+    customer =  models.ForeignKey(customer, related_name='rel_rez_customer', on_delete=models.PROTECT)
+    user =  models.ForeignKey(user, related_name='rel_rez_user', on_delete=models.PROTECT)
+    payment =  models.ForeignKey(payment, related_name='rel_rez_payment', on_delete=models.PROTECT)
+    confirmationNumber =  models.CharField(max_length=180)
+    confirmationDate = models.DateTimeField(null=True)
+    arrivalDate = models.DateTimeField(null=True)
+    total = models.DecimalField(max_digits = 8,decimal_places = 2) 
+    feeTotal = models.DecimalField(max_digits = 8,decimal_places = 2)
+    feeAgency = models.DecimalField(max_digits = 8,decimal_places = 2) 
+    feeUser = models.DecimalField(max_digits = 8,decimal_places = 2) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)    
+    deleted_at = models.DateTimeField(null=True)
+
+class audit(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    description =  models.CharField(max_length=255)
+    user =  models.ForeignKey(user, related_name='rel_audit_user', on_delete=models.PROTECT)
+
