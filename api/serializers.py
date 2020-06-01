@@ -20,6 +20,11 @@ class userSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id','user_type','country','password','name','lastname','mail','phone']
  
  
+class loginSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = user
+        fields = ['mail','password']
+
 class supplierSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = supplier

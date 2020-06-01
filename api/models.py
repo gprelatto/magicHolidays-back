@@ -1,6 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+class notification(models.Model):
+    date_from = models.DateTimeField(null=True)
+    date_to = models.DateTimeField(null=True)
+    message =  models.CharField(max_length=4000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.message)   
+
 class user_type(models.Model):
     description =  models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -99,3 +110,12 @@ class audit(models.Model):
     description =  models.CharField(max_length=255)
     user =  models.ForeignKey(user, related_name='rel_audit_user', on_delete=models.PROTECT)
 
+class token(models.Model):
+    date = models.DateField(null=True)
+    user =  models.ForeignKey(user, related_name='rel_token_user', on_delete=models.PROTECT)
+    token =  models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)    
+    def __str__(self):
+        return '%s' % (self.token)   
