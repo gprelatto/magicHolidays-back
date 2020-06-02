@@ -84,7 +84,7 @@ class payment(models.Model):
     prepaidDate = models.DateTimeField(null=True)
     payDate = models.DateTimeField(null=True)
     cancelationDate = models.DateTimeField(null=True)
-    transactionNumber =  models.CharField(max_length=50)
+    transactionNumber =  models.CharField(max_length=50,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)    
     deleted_at = models.DateTimeField(null=True)

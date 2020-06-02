@@ -140,13 +140,13 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'api.middlewareSecurity.checkAccess'
     ],
     'DEFAULT_PAGINATION_CLASS': 'api.customResponse.CustomPageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
-    ],
-    'PAGE_SIZE': 10
+    ]
 }
 
 API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
@@ -156,7 +156,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = [
     'x-api-key',
     'content-type',
-    'authorization'
+    'authorization',
+    'mail',
+    'token'
 ]
 
 # Configure Django App for Heroku.
