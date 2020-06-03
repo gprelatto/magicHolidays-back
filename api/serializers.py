@@ -19,7 +19,14 @@ class userSerializer(serializers.HyperlinkedModelSerializer):
         model = user
         fields = ['id','user_type','country','password','name','lastname','mail','phone']
  
- 
+class getUserSerializer(serializers.HyperlinkedModelSerializer):
+    user_type = serializers.PrimaryKeyRelatedField(queryset=user_type.objects.all(), many=False)
+    country = serializers.PrimaryKeyRelatedField(queryset=country.objects.all(), many=False)
+    class Meta:
+        model = user
+        fields = ['id','user_type','country','name','lastname','mail','phone']
+
+
 class loginSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = user
