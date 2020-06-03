@@ -60,7 +60,7 @@ class userTypeViewSet(viewsets.ModelViewSet):
 
 
 class getProfileView(APIView):
-    permission_classes = []
+    permission_classes = [checkAccess]
     queryset = user.objects.all()
     serializer_class = getUserSerializer
 
