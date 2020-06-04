@@ -110,6 +110,7 @@ class LoginView(APIView):
                         "results": [{
                                 'token' : obj.token,
                                 'mail' : oUser.mail,
+                                'fullname' : oUser.name + ' ' + oUser.lastname,
                                 'user_type' : oUser.user_type.id
                             }]                       
                     })               
@@ -125,6 +126,7 @@ class LoginView(APIView):
                         "results": [{
                             'token' : gToken,
                             'mail' : oUser.mail,
+                            'fullname' : oUser.name + ' ' + oUser.lastname,
                             'user_type' : oUser.user_type.id
                         }]
                     })
