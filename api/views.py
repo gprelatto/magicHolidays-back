@@ -26,35 +26,15 @@ class userTypeViewSet(viewsets.ModelViewSet):
             serializer = userTypeSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                responseData = {
-                    'code' : '200',
-                    'message' : 'AUTHORIZED',
-                    'data' : serializer.data
-                }                
-                return Response(responseData)
-            responseData = {
-                'code' : '500',
-                'message' : 'ERRORS',
-                'data' : serializer.errors
-            }                
-            return Response(responseData)
+                return Response(serializer.data)
+            return Response(serializer.errors)
         else:
-            responseData = {
-                'code' : '403',
-                'message' : 'UNAUTHORIZED',
-                'data' : []
-            }                     
-            return Response(responseData)
+            return Response({"code": 403, "msg": "Not Authorized"})  
 
     def list(self, request):
         queryset = user_type.objects.all()
         serializer = userTypeSerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
 
 
 
@@ -69,19 +49,9 @@ class getProfileView(APIView):
             userMail = request.headers['mail']
             queryset = user.objects.filter(mail = userMail)
             serializer = getUserSerializer(queryset, many=True)
-            responseData = {
-                'code' : '200',
-                'message' : 'AUTHORIZED',
-                'data' : serializer.data
-            }
-            return Response(responseData)
+            return Response(serializer.data)
         except:
-            responseData = {
-                'code' : '500',
-                'message' : 'Problem on Request',
-                'data' : []
-            }
-            return Response(responseData)
+            return Response({"code": 403, "msg": "Not Authorized"})
 
 
 
@@ -104,46 +74,26 @@ class LoginView(APIView):
                 try:
                     obj = token.objects.get(user = oUser.id,date = today)
                     return Response({
-                        "records": 1,
-                        "code": 200,
-                        "message": "Login exitoso, token en el result",
-                        "results": [{
                                 'token' : obj.token,
                                 'mail' : oUser.mail,
                                 'fullname' : oUser.name + ' ' + oUser.lastname,
                                 'user_type' : oUser.user_type.id
-                            }]                       
-                    })               
+                            })               
                 except token.DoesNotExist:
                     kToken = oUser.mail + oUser.password + str(today)
                     gToken = hashlib.md5(kToken.encode()).hexdigest()
                     cToken = token(date = today , user = oUser, token = gToken)
                     cToken.save()
                     return Response({
-                        "records": 1,
-                        "code": 200,
-                        "message": "Login exitoso, se genero un nuevo token",
-                        "results": [{
                             'token' : gToken,
                             'mail' : oUser.mail,
                             'fullname' : oUser.name + ' ' + oUser.lastname,
                             'user_type' : oUser.user_type.id
-                        }]
-                    })
+                        })
             else : 
-                return Response({
-                    "records": 0,
-                    "code": 500,
-                    "message": "usuario/password incorrecta",
-                    "results": []
-                })
+                return Response({"code": 403, "msg": "Not Authorized"})  
         except user.DoesNotExist:
-            return Response({
-                "records": 0,
-                "code": 500,
-                "message": "usuario/password incorrecta",
-                "results": []
-            })
+            return Response({"code": 403, "msg": "Not Authorized"})  
 
 
 class countryViewSet(viewsets.ModelViewSet):
@@ -156,37 +106,17 @@ class countryViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = country.objects.all()
         serializer = countrySerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
 
     def create(self, request):
         if canCreate(request,'country') == True :
             serializer = countrySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                responseData = {
-                    'code' : '200',
-                    'message' : 'AUTHORIZED',
-                    'data' : serializer.data
-                }                
-                return Response(responseData)
-            responseData = {
-                'code' : '500',
-                'message' : 'ERRORS',
-                'data' : serializer.errors
-            }                
-            return Response(responseData)
+                return Response(serializer.data)
+            return Response(serializer.errors)
         else:
-            responseData = {
-                'code' : '403',
-                'message' : 'UNAUTHORIZED',
-                'data' : []
-            }                     
-            return Response(responseData)
+            return Response({"code": 403, "msg": "Not Authorized"})  
 
 class userViewSet(viewsets.ModelViewSet):
     """
@@ -205,35 +135,15 @@ class userViewSet(viewsets.ModelViewSet):
             serializer = userSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                responseData = {
-                    'code' : '200',
-                    'message' : 'AUTHORIZED',
-                    'data' : serializer.data
-                }                
-                return Response(responseData)
-            responseData = {
-                'code' : '500',
-                'message' : 'ERRORS',
-                'data' : serializer.errors
-            }                
-            return Response(responseData)
+                return Response(serializer.data)
+            return Response(serializer.errors)
         else:
-            responseData = {
-                'code' : '403',
-                'message' : 'UNAUTHORIZED',
-                'data' : []
-            }                     
-            return Response(responseData)
+            return Response({"code": 403, "msg": "Not Authorized"})  
 
     def list(self, request):
         queryset = user.objects.all()
         serializer = userSerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
 
 
 
@@ -247,37 +157,17 @@ class supplierViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = supplier.objects.all()
         serializer = supplierSerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
 
     def create(self, request):
         if canCreate(request,'supplier') == True :
             serializer = supplierSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                responseData = {
-                    'code' : '200',
-                    'message' : 'AUTHORIZED',
-                    'data' : serializer.data
-                }                
-                return Response(responseData)
-            responseData = {
-                'code' : '500',
-                'message' : 'ERRORS',
-                'data' : serializer.errors
-            }                
-            return Response(responseData)
+                return Response(serializer.data)
+            return Response(serializer.errors)
         else:
-            responseData = {
-                'code' : '403',
-                'message' : 'UNAUTHORIZED',
-                'data' : []
-            }                     
-            return Response(responseData)
+            return Response({"code": 403, "msg": "Not Authorized"})  
 
 class productCategoryViewSet(viewsets.ModelViewSet):
     """
@@ -289,37 +179,17 @@ class productCategoryViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = product_category.objects.all()
         serializer = productCategorySerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
 
     def create(self, request):
         if canCreate(request,'productCategory') == True :
             serializer = productCategorySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                responseData = {
-                    'code' : '200',
-                    'message' : 'AUTHORIZED',
-                    'data' : serializer.data
-                }                
-                return Response(responseData)
-            responseData = {
-                'code' : '500',
-                'message' : 'ERRORS',
-                'data' : serializer.errors
-            }                
-            return Response(responseData)
+                return Response(serializer.data)
+            return Response(serializer.errors)
         else:
-            responseData = {
-                'code' : '403',
-                'message' : 'UNAUTHORIZED',
-                'data' : []
-            }                     
-            return Response(responseData)
+            return Response({"code": 403, "msg": "Not Authorized"})  
 
 class productViewSet(viewsets.ModelViewSet):
     """
@@ -331,37 +201,17 @@ class productViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = product.objects.all()
         serializer = productSerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
 
     def create(self, request):
         if canCreate(request,'product') == True :
             serializer = productSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                responseData = {
-                    'code' : '200',
-                    'message' : 'AUTHORIZED',
-                    'data' : serializer.data
-                }                
-                return Response(responseData)
-            responseData = {
-                'code' : '500',
-                'message' : 'ERRORS',
-                'data' : serializer.errors
-            }                
-            return Response(responseData)
+                return Response(serializer.data)
+            return Response(serializer.errors)
         else:
-            responseData = {
-                'code' : '403',
-                'message' : 'UNAUTHORIZED',
-                'data' : []
-            }                     
-            return Response(responseData)
+            return Response({"code": 403, "msg": "Not Authorized"})  
 
 class customerViewSet(viewsets.ModelViewSet):
     """
@@ -373,29 +223,14 @@ class customerViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = customer.objects.all()
         serializer = customerSerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
  
     def create(self, request):
         serializer = customerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            responseData = {
-                'code' : '200',
-                'message' : 'AUTHORIZED',
-                'data' : serializer.data
-            }                
-            return Response(responseData)
-        responseData = {
-            'code' : '500',
-            'message' : 'ERRORS',
-            'data' : serializer.errors
-        }                
-        return Response(responseData)
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 class paymentViewSet(viewsets.ModelViewSet):
     """
@@ -407,29 +242,14 @@ class paymentViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = payment.objects.all()
         serializer = paymentSerializer(queryset, many=True)
-        responseData = {
-            'code' : '200',
-            'message' : 'AUTHORIZED',
-            'data' : serializer.data
-        }
-        return Response(responseData)
+        return Response(serializer.data)
 
     def create(self, request):
         serializer = paymentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            responseData = {
-                'code' : '200',
-                'message' : 'AUTHORIZED',
-                'data' : serializer.data
-            }                
-            return Response(responseData)
-        responseData = {
-            'code' : '500',
-            'message' : 'ERRORS',
-            'data' : serializer.errors
-        }                
-        return Response(responseData)
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 class rezViewSet(viewsets.ModelViewSet):
     """
@@ -449,43 +269,18 @@ class rezViewSet(viewsets.ModelViewSet):
                 elif (oUser.user_type.description == 'Employee'):
                     queryset = rez.objects.filter(user = oUser.id)
                 serializer = rezSerializer(queryset, many=True)
-                responseData = {
-                    'code' : '200',
-                    'message' : 'AUTHORIZED',
-                    'data' : serializer.data
-                }
-                return Response(responseData)                
+                return Response(serializer.data)                
             except user.DoesNotExist:
-                responseData = {
-                    'code' : '403',
-                    'message' : 'USER NOT FOUND',
-                    'data' : []
-                }
-                return Response(responseData)   
+                return Response({"code": 403, "msg": "Not Authorized"})    
         except:
-                responseData = {
-                    'code' : '403',
-                    'message' : 'HEADERS NOT FOUND',
-                    'data' : []
-                }
-                return Response(responseData)   
+               return Response({"code": 403, "msg": "Not Authorized"})    
 
     def create(self, request):
         serializer = rezSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            responseData = {
-                'code' : '200',
-                'message' : 'AUTHORIZED',
-                'data' : serializer.data
-            }                
-            return Response(responseData)
-        responseData = {
-            'code' : '500',
-            'message' : 'ERRORS',
-            'data' : serializer.errors
-        }                
-        return Response(responseData)
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 class auditViewSet(viewsets.ModelViewSet):
@@ -499,19 +294,9 @@ class auditViewSet(viewsets.ModelViewSet):
         if checkAccess(request,'audit','get') == 'OK':
             queryset = audit.objects.all()
             serializer = auditSerializer(queryset, many=True)
-            responseData = {
-                'code' : '200',
-                'message' : 'AUTHORIZED',
-                'data' : serializer.data
-            }
-            return Response(responseData)
+            return Response(serializer.data)
         else:
-            responseData = {
-                'code' : '403',
-                'message' : 'NOT AUTHORIZED',
-                'data' : []
-            }           
-            return Response(responseData)  
+            return Response({"status_code": 403, "detail": "Not Authorized"})  
 
 
 

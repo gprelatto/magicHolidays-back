@@ -146,7 +146,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.customResponse.CustomPageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
-    ]
+    ],
+    "DEFAULT_RENDERER_CLASSES": ("api.middlewareSecurity.CustomJsonRender",)
 }
 
 API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
