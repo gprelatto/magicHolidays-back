@@ -9,9 +9,11 @@ from django.db.models import Max
 import django_filters
 import hashlib 
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from datetime import date
 from django.shortcuts import get_object_or_404
+from django.db import connection
 
 class userTypeViewSet(viewsets.ModelViewSet):
     """
@@ -384,18 +386,21 @@ class rezViewSet(viewsets.ModelViewSet):
     def list(self, request):
         try:
             userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
             try:
-                oUser = user.objects.get(mail = userMail)
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     queryset = rez.objects.all()
                 elif (oUser.user_type.description == 'Employee'):
                     queryset = rez.objects.filter(user = oUser.id)
                 serializer = rezSerializer(queryset, many=True)
-                return Response(serializer.data)                
-            except user.DoesNotExist:
-                return Response({"code": 403, "message": "Not Authorized"})    
-        except:
-               return Response({"code": 403, "message": "Not Authorized"})    
+                return Response(serializer.data)    
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
     def create(self, request):
         serializer = rezSerializer(data=request.data)
@@ -421,6 +426,403 @@ class auditViewSet(viewsets.ModelViewSet):
             return Response({"status_code": 403, "detail": "Not Authorized"})  
 
 
+class getTotals(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    cursor.execute('\
+                        select \
+                            u.name, \
+                            u.lastname, \
+                            sum(total) TotalSales, \
+                            sum(r."feeTotal") as TotalFees, \
+                            sum(r."feeAgency") as TotalFeeAgency, \
+                            sum(r."feeUser") as TotalFeeUser,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalToPay,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is not null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalPaid,\
+                            sum(case when py."prepaidDate" is null and py."payDate" is null and py."cancelationDate" is null then r."feeTotal" else 0 end) as TotalToCollect,\
+                            sum(case when py."cancelationDate" is not null then r."feeTotal" else 0 end) as TotalCancelled\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        group by 1,2                  \
+                    ')
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        select \
+                            u.name, \
+                            u.lastname, \
+                            sum(total) TotalSales, \
+                            sum(r."feeTotal") as TotalFees, \
+                            sum(r."feeAgency") as TotalFeeAgency, \
+                            sum(r."feeUser") as TotalFeeUser,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalToPay,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is not null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalPaid,\
+                            sum(case when py."prepaidDate" is null and py."payDate" is null and py."cancelationDate" is null then r."feeTotal" else 0 end) as TotalToCollect,\
+                            sum(case when py."cancelationDate" is not null then r."feeTotal" else 0 end) as TotalCancelled\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where r.user_id = {0} \
+                        group by 1,2                 \
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
+class getMonthlyTotals(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                   cursor.execute('\
+                        select \
+                            EXTRACT(YEAR from r."confirmationDate") as Year,\
+                            EXTRACT(MONTH from r."confirmationDate") as Month,\
+                            sum(r.total) TotalSales, \
+                            sum(r."feeTotal") as TotalFees, \
+                            sum(r."feeAgency") as TotalFeeAgency, \
+                            sum(r."feeUser") as TotalFeeUser,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalToPay,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is not null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalPaid,\
+                            sum(case when py."prepaidDate" is null and py."payDate" is null and py."cancelationDate" is null then r."feeTotal" else 0 end) as TotalToCollect,\
+                            sum(case when py."cancelationDate" is not null then r."feeTotal" else 0 end) as TotalCancelled\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        group by 1,2\
+                        order by 1,2\
+                    ')
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        select \
+                            EXTRACT(YEAR from r."confirmationDate") as Year,\
+                            EXTRACT(MONTH from r."confirmationDate") as Month,\
+                            sum(r.total) TotalSales, \
+                            sum(r."feeTotal") as TotalFees, \
+                            sum(r."feeAgency") as TotalFeeAgency, \
+                            sum(r."feeUser") as TotalFeeUser,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalToPay,\
+                            sum(case when py."prepaidDate" is not null and py."payDate" is not null and py."cancelationDate" is null then r."feeUser" else 0 end) as TotalPaid,\
+                            sum(case when py."prepaidDate" is null and py."payDate" is null and py."cancelationDate" is null then r."feeTotal" else 0 end) as TotalToCollect,\
+                            sum(case when py."cancelationDate" is not null then r."feeTotal" else 0 end) as TotalCancelled\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where r.user_id = {0} \
+                        group by 1,2\
+                        order by 1,2\
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))   
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
+class salesByProduct(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    cursor.execute('\
+                        select \
+                            p.description as key,\
+                            count(*) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        group by 1\
+                        order by 1\
+                    ')
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        select \
+                            p.description as key,\
+                            count(*) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where r.user_id = {0} \
+                        group by 1\
+                        order by 1\
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))   
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+class salesByCountry(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    cursor.execute('\
+                        select \
+                            cy.description as key,\
+                            count(*) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        join api_country cy on cy.id = c.country_id \
+                        group by 1\
+                        order by 1\
+                    ')
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        select \
+                            cy.description as key,\
+                            count(*) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        join api_country cy on cy.id = c.country_id \
+                        where r.user_id = {0} \
+                        group by 1\
+                        order by 1\
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))    
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
+class widgetsData(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        select \
+                            'Total Sales' as Widget,\
+                            count(*) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        join api_country cy on cy.id = c.country_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where cast( r."confirmationDate" as date) = cast (now() as date)\
+                        union all \
+                        select \
+                            'Total Revenue' as Widget,\
+                            SUM(r.total) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        join api_country cy on cy.id = c.country_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where cast( r."confirmationDate" as date) = cast (now() as date)\
+                        union all \
+                        select \
+                            'Total Fees' as Widget,\
+                            SUM(r."feeUser") TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        join api_country cy on cy.id = c.country_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where cast( r."confirmationDate" as date) = cast (now() as date)\
+                    """
+                    cursor.execute(command)
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        select \
+                            'Total Sales' as Widget,\
+                            count(*) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        join api_country cy on cy.id = c.country_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
+                        union all \
+                        select \
+                            'Total Revenue' as Widget,\
+                            SUM(r.total) TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        join api_country cy on cy.id = c.country_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
+                        union all \
+                        select \
+                            'Total Fees' as Widget,\
+                            SUM(r."feeUser") TotalSales\
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        join api_country cy on cy.id = c.country_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))    
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
+class detailedSales(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        select \
+                            u.name, \
+                            u.lastname,\
+                            r."confirmationDate" ,\
+                            r."arrivalDate",\
+                            r."confirmationNumber",\
+                            s.description as Supplier,\
+                            pc.description as Category,\
+                            p.description as Product,\
+                            total, \
+                            r."feeTotal" as TotalFees, \
+                            r."feeAgency" as TotalFeeAgency, \
+                            r."feeUser" as TotalFeeUser,\
+                            case when py."prepaidDate" is not null and py."payDate" is null and py."cancelationDate" is null then r."feeUser" else 0 end as TotalToPay,\
+                            case when py."prepaidDate" is not null and py."payDate" is not null and py."cancelationDate" is null then r."feeUser" else 0 end as TotalPaid,\
+                            case when py."prepaidDate" is null and py."payDate" is null and py."cancelationDate" is null then r."feeTotal" else 0 end as TotalToCollect,\
+                            case when py."cancelationDate" is not null then r."feeTotal" else 0 end as TotalCancelled,\
+                            py."transactionNumber" \
+                        from api_rez r\
+                        join api_user u on r.user_id = u.id \
+                        join api_customer c on r.customer_id = c.id \
+                        join api_product p on p.id = r.product_id \
+                        join api_product_category pc on pc.id = p.product_category_id \
+                        join api_supplier s on s.id = pc.supplier_id \
+                        left join api_payment py on py.rez_id = r.id \
+                        join api_country cy on cy.id = c.country_id\
+                        where r."confirmationDate" between '{0}' and '{1}'\
+                    """.format(request.data['dateFrom'],request.data['dateTo'])
+                    cursor.execute(command)
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"})  
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
+
 
 def canCreate(request,endpoint):
     try:
@@ -441,3 +843,13 @@ def canCreate(request,endpoint):
     except:
         return False 
  
+
+from collections import namedtuple
+
+def dictfetchall(cursor):
+    "Return all rows from a cursor as a dict"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]

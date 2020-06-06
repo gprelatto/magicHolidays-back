@@ -38,5 +38,11 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('login/', views.LoginView.as_view(), name='login'),
     path('getProfile/', views.getProfileView.as_view(), name='profile'),    
-    path('updatePassword/', views.updatePasswordView.as_view(), name='updatePassword')    
+    path('updatePassword/', views.updatePasswordView.as_view(), name='updatePassword'),
+    path('getTotals/', views.getTotals.as_view(), name='totals'),
+    path('monthlyTotals/', views.getMonthlyTotals.as_view(), name='monthlyTotals'),
+    path('salesProduct/', views.salesByProduct.as_view(), name='salesByProduct'),
+    path('salesCountry/', views.salesByCountry.as_view(), name='salesByCountry'),
+    path('widgets/', views.widgetsData.as_view(), name='widgets'),
+    path('detailedSales/', views.detailedSales.as_view(), name='detailedTotals')
 ]
