@@ -29,7 +29,17 @@ class userTypeViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "msg": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def update(self, request, pk=None):
+        if canCreate(request,'userType') == True :
+            serializer = userTypeSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
     def list(self, request):
         queryset = user_type.objects.all()
@@ -51,9 +61,68 @@ class getProfileView(APIView):
             serializer = getUserSerializer(queryset, many=True)
             return Response(serializer.data)
         except:
-            return Response({"code": 403, "msg": "Not Authorized"})
+            return Response({"code": 403, "message": "Not Authorized"})
+
+    def put(self, request, pk, format=None):
+        userGet = self.get_object(pk)
+        request.data._mutable = True
+        fMail = request.data['mail']
+        oUser = user.objects.get(mail = fMail)
+        request.data['password'] = oUser.password
+        request.data._mutable = False
+        serializerform = userSerializer(data=request.data)        
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = fMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if (obj.user.user_type.description == 'Admin' or obj.user.mail == fMail):
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data)
+                    return Response(serializer.errors)               
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 
+class updatePasswordView(APIView):
+    permission_classes = [checkAccess]
+    queryset = user.objects.all()
+    serializer_class = userSerializer
+
+    def put(self, request, pk, format=None):
+        userGet = self.get_object(pk)
+        request.data._mutable = True
+        fMail = request.data['mail']
+        fPassword = request.data['password']
+        ePassword = hashlib.md5(fPassword.encode()).hexdigest()
+        request.data['password'] = ePassword
+        request.data._mutable = False
+        serializerform = userSerializer(data=request.data)        
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = fMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if (obj.user.user_type.description == 'Admin' or obj.user.mail == fMail):
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data)
+                    return Response(serializer.errors)               
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 class LoginView(APIView):
     permission_classes = []
@@ -91,9 +160,9 @@ class LoginView(APIView):
                             'user_type' : oUser.user_type.id
                         })
             else : 
-                return Response({"code": 403, "msg": "Not Authorized"})  
+                return Response({"code": 403, "message": "Not Authorized"})  
         except user.DoesNotExist:
-            return Response({"code": 403, "msg": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 
 class countryViewSet(viewsets.ModelViewSet):
@@ -116,7 +185,17 @@ class countryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "msg": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def update(self, request, pk=None):
+        if canCreate(request,'country') == True :
+            serializer = countrySerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 class userViewSet(viewsets.ModelViewSet):
     """
@@ -138,14 +217,26 @@ class userViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "msg": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized"})  
 
     def list(self, request):
         queryset = user.objects.all()
-        serializer = userSerializer(queryset, many=True)
+        serializer = getUserSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
+    def update(self, request, pk=None):
+        if canCreate(request,'user') == True :
+            request.data._mutable = True
+            request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
+            request.data._mutable = False            
+            serializer = userSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 class supplierViewSet(viewsets.ModelViewSet):
     """
@@ -167,7 +258,18 @@ class supplierViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "msg": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def update(self, request, pk=None):
+        if canCreate(request,'supplier') == True :
+            serializer = supplierSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
+ 
 
 class productCategoryViewSet(viewsets.ModelViewSet):
     """
@@ -189,7 +291,17 @@ class productCategoryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "msg": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def update(self, request, pk=None):
+        if canCreate(request,'productCategory') == True :
+            serializer = productCategorySerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 class productViewSet(viewsets.ModelViewSet):
     """
@@ -211,7 +323,17 @@ class productViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "msg": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def update(self, request, pk=None):
+        if canCreate(request,'product') == True :
+            serializer = productSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 class customerViewSet(viewsets.ModelViewSet):
     """
@@ -271,9 +393,9 @@ class rezViewSet(viewsets.ModelViewSet):
                 serializer = rezSerializer(queryset, many=True)
                 return Response(serializer.data)                
             except user.DoesNotExist:
-                return Response({"code": 403, "msg": "Not Authorized"})    
+                return Response({"code": 403, "message": "Not Authorized"})    
         except:
-               return Response({"code": 403, "msg": "Not Authorized"})    
+               return Response({"code": 403, "message": "Not Authorized"})    
 
     def create(self, request):
         serializer = rezSerializer(data=request.data)

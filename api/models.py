@@ -36,7 +36,7 @@ class user(models.Model):
     name =  models.CharField(max_length=60)
     lastname =  models.CharField(max_length=60)
     mail =  models.CharField(max_length=100)
-    phone =  models.CharField(max_length=80)
+    phone =  models.CharField(max_length=80,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
@@ -80,20 +80,10 @@ class customer(models.Model):
     def __str__(self):
         return '%s' % (self.fullname)   
 
-class payment(models.Model):
-    prepaidDate = models.DateTimeField(null=True)
-    payDate = models.DateTimeField(null=True)
-    cancelationDate = models.DateTimeField(null=True)
-    transactionNumber =  models.CharField(max_length=50,null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(null=True)    
-    deleted_at = models.DateTimeField(null=True)
-
 class rez(models.Model):
     product =  models.ForeignKey(product, related_name='rel_rez_product', on_delete=models.PROTECT)
     customer =  models.ForeignKey(customer, related_name='rel_rez_customer', on_delete=models.PROTECT)
     user =  models.ForeignKey(user, related_name='rel_rez_user', on_delete=models.PROTECT)
-    payment =  models.ForeignKey(payment, related_name='rel_rez_payment', on_delete=models.PROTECT)
     confirmationNumber =  models.CharField(max_length=180)
     confirmationDate = models.DateTimeField(null=True)
     arrivalDate = models.DateTimeField(null=True)
@@ -104,6 +94,18 @@ class rez(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)    
     deleted_at = models.DateTimeField(null=True)
+
+
+class payment(models.Model):
+    rez =  models.ForeignKey(rez, related_name='rel_payment_rez', on_delete=models.PROTECT)
+    prepaidDate = models.DateTimeField(null=True)
+    payDate = models.DateTimeField(null=True)
+    cancelationDate = models.DateTimeField(null=True)
+    transactionNumber =  models.CharField(max_length=50,null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(null=True)    
+    deleted_at = models.DateTimeField(null=True)
+
 
 class audit(models.Model):
     date = models.DateTimeField(auto_now_add=True)

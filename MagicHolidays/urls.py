@@ -37,5 +37,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('login/', views.LoginView.as_view(), name='login'),
-    path('getProfile/', views.getProfileView.as_view(), name='profile')    
+    path('getProfile/', views.getProfileView.as_view(), name='profile'),    
+    path('updatePassword/', views.updatePasswordView.as_view(), name='updatePassword')    
 ]
