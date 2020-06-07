@@ -403,11 +403,26 @@ class rezViewSet(viewsets.ModelViewSet):
             return Response({"code": 403, "message": "Not Authorized"})  
 
     def create(self, request):
-        serializer = rezSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                request.data._mutable = True
+                request.data['user_id'] = oUser.id
+                request.data._mutable = False                
+                serializer = rezSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors)
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})          
+
 
 
 class auditViewSet(viewsets.ModelViewSet):
