@@ -388,7 +388,7 @@ class prepaidViewSet(APIView):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if (obj.user.user_type.description != 'Admin'):
+                if (obj.user.user_type.description == 'Admin'):
                     queryset = payment.objects.filter(prepaidDate__isnull=True)
                     serializer = paymentSerializer(queryset, many=True)
                     return Response(serializer.data)             
@@ -407,7 +407,7 @@ class prepaidViewSet(APIView):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if (obj.user.user_type.description != 'Admin'):
+                if (obj.user.user_type.description == 'Admin'):
                     errorData = ''
                     errorFlag = 0
                     for i in request.data['reservations']:
@@ -452,7 +452,7 @@ class payViewSet(APIView):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if (obj.user.user_type.description != 'Admin'):
+                if (obj.user.user_type.description == 'Admin'):
                     queryset = payment.objects.filter(prepaidDate__isnull=False)
                     serializer = paymentSerializer(queryset, many=True)
                     return Response(serializer.data)             
@@ -471,7 +471,7 @@ class payViewSet(APIView):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if (obj.user.user_type.description != 'Admin'):
+                if (obj.user.user_type.description == 'Admin'):
                     errorData = ''
                     errorFlag = 0
                     for i in request.data['reservations']:
