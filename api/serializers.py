@@ -63,7 +63,7 @@ class paymentSerializer(serializers.HyperlinkedModelSerializer):
 class rezSerializer(serializers.HyperlinkedModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=product.objects.all(), many=False)
     customer = serializers.PrimaryKeyRelatedField(queryset=customer.objects.all(), many=False)
-    user = serializers.PrimaryKeyRelatedField(queryset=user.objects.all(), many=False)
+    user = serializers.PrimaryKeyRelatedField(queryset=user.objects.all(), many=False, required=False)
     class Meta:
         model = rez
         fields = ['id','product','customer','user','confirmationNumber','confirmationDate','arrivalDate','total','feeTotal','feeAgency','feeUser']
