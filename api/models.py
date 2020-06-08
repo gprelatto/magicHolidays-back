@@ -83,8 +83,8 @@ class customer(models.Model):
 class rez(models.Model):
     product =  models.ForeignKey(product, related_name='rel_rez_product', on_delete=models.PROTECT)
     customer =  models.ForeignKey(customer, related_name='rel_rez_customer', on_delete=models.PROTECT)
-    user =  models.ForeignKey(user, related_name='rel_rez_user', on_delete=models.PROTECT)
-    confirmationNumber =  models.CharField(max_length=180)
+    user =  models.ForeignKey(user, related_name='rel_rez_user', on_delete=models.PROTECT, null=True)
+    confirmationNumber =  models.CharField(max_length=180, null=True)
     confirmationDate = models.DateTimeField(null=True)
     arrivalDate = models.DateTimeField(null=True)
     total = models.DecimalField(max_digits = 8,decimal_places = 2) 
