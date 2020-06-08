@@ -406,7 +406,7 @@ class rezViewSet(viewsets.ModelViewSet):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                request.data['user_id'] = oUser.id
+                request.data['user'] = oUser.id
                 serializer = rezSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save()
