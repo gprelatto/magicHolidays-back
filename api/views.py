@@ -210,9 +210,7 @@ class userViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         if canCreate(request,'user') == True :
-            request.data._mutable = True
             request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
-            request.data._mutable = False            
             serializer = userSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -410,9 +408,7 @@ class rezViewSet(viewsets.ModelViewSet):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                request.data._mutable = True
                 request.data['user_id'] = oUser.id
-                request.data._mutable = False                
                 serializer = rezSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save()
