@@ -99,19 +99,15 @@ class updatePasswordView(APIView):
     serializer_class = userSerializer
 
     def put(self, request, pk=None, format=None):
-        request.data._mutable = True
-        fMail = request.data['mail']
-        fPassword = request.data['password']
-        ePassword = hashlib.md5(fPassword.encode()).hexdigest()
-        request.data['password'] = ePassword
-        request.data._mutable = False
-        userToUpdate = get_object_or_404(user.objects.all(), id=request.data['id'])
-        serializer = userSerializer(instance=userToUpdate,data=request.data,partial=True)        
         try:
             userMail = request.headers['mail']
             userToken = request.headers['token']            
             oUser = user.objects.get(mail = userMail)
+            userToUpdate = user.objects.get(mail = userMail)
+            fPassword = request.data['password']
+            userToUpdate.password = hashlib.md5(fPassword.encode()).hexdigest()
             today = date.today()
+            serializer = userSerializer(instance=oUser,data=userToUpdate,partial=True)        
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (obj.user.user_type.description == 'Admin' or obj.user.mail == fMail):
