@@ -44,5 +44,7 @@ urlpatterns = [
     path('salesProduct/', views.salesByProduct.as_view(), name='salesByProduct'),
     path('salesCountry/', views.salesByCountry.as_view(), name='salesByCountry'),
     path('widgets/', views.widgetsData.as_view(), name='widgets'),
-    path('detailedSales/', views.detailedSales.as_view(), name='detailedTotals')
+    path('detailedSales/', views.detailedSales.as_view(), name='detailedTotals'),
+    path('prepay/', views.prepaidViewSet.as_view(), name='prepay'),
+    path('pay/', views.payViewSet.as_view(), name='pay')    
 ]

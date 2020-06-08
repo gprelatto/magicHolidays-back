@@ -56,9 +56,36 @@ class customerSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id','fullname','mail','phone','country']
 
 class paymentSerializer(serializers.HyperlinkedModelSerializer):
+    rez = serializers.PrimaryKeyRelatedField(queryset=rez.objects.all(), many=False)
     class Meta:
         model = payment
-        fields = ['id','prepaidDate','payDate','cancelationDate','transactionNumber']
+        fields = ['id','rez','prepaidDate','payDate','cancelationDate','transactionNumber']
+
+class prepaidSerializer(serializers.HyperlinkedModelSerializer):
+    reservations = serializers.StringRelatedField(many=True)
+    prepaidDate = serializers.CharField(required=False,allow_blank=True)
+    class Meta:
+        model = payment
+        fields = ['id','reservations','prepaidDate']
+
+
+class paySerializer(serializers.HyperlinkedModelSerializer):
+    reservations = serializers.StringRelatedField(many=True)
+    prepayDate = serializers.CharField(required=False,allow_blank=True)
+    payDate = serializers.CharField(required=False,allow_blank=True)
+    transactionNumber = serializers.CharField(required=False,allow_blank=True)
+    class Meta:
+        model = payment
+        fields = ['id','reservations','prepaidDate','payDate','transactionNumber']
+
+
+class cancelSerializer(serializers.HyperlinkedModelSerializer):
+    reservations = serializers.StringRelatedField(many=True)
+    cancelationDate = serializers.CharField(required=False,allow_blank=True)
+    class Meta:
+        model = payment
+        fields = ['id','reservations','cancelationDate']
+
 
 class rezSerializer(serializers.HyperlinkedModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=product.objects.all(), many=False)

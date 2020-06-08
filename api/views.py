@@ -371,6 +371,136 @@ class paymentViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+
+class prepaidViewSet(APIView):
+    """
+    API endpoint that allows taxes to be viewed or edited.
+    """
+    permission_classes = [checkAccess]
+    queryset = payment.objects.all()
+    serializer_class = prepaidSerializer
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if (obj.user.user_type.description != 'Admin'):
+                    queryset = payment.objects.filter(prepaidDate__isnull=True)
+                    serializer = paymentSerializer(queryset, many=True)
+                    return Response(serializer.data)             
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def post(self, request, *args, **kwargs):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if (obj.user.user_type.description != 'Admin'):
+                    errorData = ''
+                    errorFlag = 0
+                    for i in request.data['reservations']:
+                        obj_to_put = {
+                            "id" : 0,
+                            "rez" : str(i),
+                            'prepaidDate' : request.data['prepaidDate'],
+                            'payDate' : None,
+                            'cancelationDate' : None,
+                            'transactionNumber' : None
+                        }
+                        serializer = paymentSerializer(data=obj_to_put)    
+                        if serializer.is_valid():
+                            serializer.save()
+                        else :
+                            errorFlag = errorFlag + 1
+                            errorData = errorData + 'Reservation : ' + str(i) + ', Error: ' + str(errorData) + ' .'
+                    if errorFlag > 0 :
+                        return Response({"code": 500, "message": errorData})
+                    else :
+                        return Response({"code": 200, "message": "All payments succesfully generated"})
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+class payViewSet(APIView):
+    """
+    API endpoint that allows taxes to be viewed or edited.
+    """
+    permission_classes = [checkAccess]
+    queryset = payment.objects.all()
+    serializer_class = prepaidSerializer
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if (obj.user.user_type.description != 'Admin'):
+                    queryset = payment.objects.filter(prepaidDate__isnull=False)
+                    serializer = paymentSerializer(queryset, many=True)
+                    return Response(serializer.data)             
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def post(self, request, *args, **kwargs):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if (obj.user.user_type.description != 'Admin'):
+                    errorData = ''
+                    errorFlag = 0
+                    for i in request.data['reservations']:
+                        obj_to_put = {
+                            "id" : 0,
+                            "rez" : i,
+                            'prepaidDate' : request.data['prepaidDate'],
+                            'payDate' : request.data['payDate'],
+                            'cancelationDate' : None,
+                            'transactionNumber' : request.data['transactionNumber']
+                        }
+                        serializer = paymentSerializer(data=obj_to_put)    
+                        if serializer.is_valid():
+                            serializer.save()
+                        else:
+                            errorFlag = errorFlag + 1
+                            errorData = errorData + 'Reservation : ' + str(i) + ', Error: ' + str(errorData) + ' .'
+                    if errorFlag > 0 :
+                        return Response({"code": 500, "message": errorData})
+                    else :
+                        return Response({"code": 200, "message": "All payments succesfully generated"})
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
 class rezViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows taxes to be viewed or edited.
