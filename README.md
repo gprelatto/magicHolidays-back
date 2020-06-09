@@ -1,1 +1,4 @@
-# React-FarmPaperless
+# Backend Magic Holidays
+
+Endpoints:
+
