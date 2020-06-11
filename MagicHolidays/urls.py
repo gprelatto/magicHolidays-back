@@ -45,5 +45,6 @@ urlpatterns = [
     path('widgets/', views.widgetsData.as_view(), name='widgets'),
     path('detailedSales/', views.detailedSales.as_view(), name='detailedTotals'),
     path('prepay/', views.prepaidViewSet.as_view(), name='prepay'),
-    path('pay/', views.payViewSet.as_view(), name='pay')    
+    path('pay/', views.payViewSet.as_view(), name='pay'),    
+    path('deletePayment/', views.payDeleteViewSet.as_view(), name='deletePayment')    
 ]

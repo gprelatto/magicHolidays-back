@@ -35,7 +35,8 @@ class userTypeViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'userType') == True :
-            serializer = userTypeSerializer(data=request.data)
+            obj_to_edit = user_type.objects.filter(id = request.data["id"])
+            serializer = userTypeSerializer(obj_to_edit, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -72,7 +73,8 @@ class getProfileView(APIView):
         oUser = user.objects.get(mail = fMail)
         request.data['password'] = oUser.password
         request.data._mutable = False
-        serializerform = userSerializer(data=request.data)        
+        obj_to_edit = user.objects.filter(id = request.data["id"])
+        serializer = userSerializer(obj_to_edit, data=request.data)        
         try:
             userMail = request.headers['mail']
             userToken = request.headers['token']            
@@ -187,7 +189,8 @@ class countryViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'country') == True :
-            serializer = countrySerializer(data=request.data)
+            obj_to_edit = country.objects.filter(id = request.data["id"])
+            serializer = countrySerializer(obj_to_edit, data=request.data)                    
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -227,8 +230,9 @@ class userViewSet(viewsets.ModelViewSet):
         if canCreate(request,'user') == True :
             request.data._mutable = True
             request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
-            request.data._mutable = False            
-            serializer = userSerializer(data=request.data)
+            request.data._mutable = False   
+            obj_to_edit = user.objects.filter(id = request.data["id"])
+            serializer = userSerializer(obj_to_edit, data=request.data)                                         
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -260,7 +264,8 @@ class supplierViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'supplier') == True :
-            serializer = supplierSerializer(data=request.data)
+            obj_to_edit = supplier.objects.filter(id = request.data["id"])
+            serializer = supplierSerializer(obj_to_edit, data=request.data)              
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -293,7 +298,8 @@ class productCategoryViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'productCategory') == True :
-            serializer = productCategorySerializer(data=request.data)
+            obj_to_edit = product_category.objects.filter(id = request.data["id"])
+            serializer = productCategorySerializer(obj_to_edit, data=request.data)                          
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -325,7 +331,8 @@ class productViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'product') == True :
-            serializer = productSerializer(data=request.data)
+            obj_to_edit = product.objects.filter(id = request.data["id"])
+            serializer = productSerializer(obj_to_edit, data=request.data)                                      
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -347,6 +354,14 @@ class customerViewSet(viewsets.ModelViewSet):
  
     def create(self, request):
         serializer = customerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def update(self, request, pk=None):
+        obj_to_edit = customer.objects.filter(id = request.data["id"])
+        serializer = customerSerializer(obj_to_edit, data=request.data)                                      
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -389,8 +404,8 @@ class prepaidViewSet(APIView):
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (obj.user.user_type.description == 'Admin'):
-                    queryset = payment.objects.filter(prepaidDate__isnull=True)
-                    serializer = paymentSerializer(queryset, many=True)
+                    queryset = rez.objects.filter(rel_payment_rez__isnull = True)
+                    serializer = rezPrepaySerializer(queryset, many=True)
                     return Response(serializer.data)             
                 else:
                     return Response({"code": 403, "message": "Not Authorized"}) 
@@ -429,6 +444,46 @@ class prepaidViewSet(APIView):
                         return Response({"code": 500, "message": errorData})
                     else :
                         return Response({"code": 200, "message": "All payments succesfully generated"})
+                else:
+                    return Response({"code": 403, "message": "Not Authorized"}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
+class payDeleteViewSet(APIView):
+    """
+    API endpoint that allows taxes to be viewed or edited.
+    """
+    permission_classes = [checkAccess]
+    queryset = payment.objects.all()
+    serializer_class = prepaidSerializer
+
+    def delete(self, request, pk, format=None):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if (obj.user.user_type.description == 'Admin'):
+                    obj_to_edit = payment.objects.get(pk=pk)
+                    obj_to_put = {
+                        "id" : obj_to_edit.id,
+                        "rez" : obj_to_edit.rez,
+                        'prepaidDate' : obj_to_edit.prepaidDate,
+                        'payDate' : obj_to_edit.payDate,
+                        'cancelationDate' : today,
+                        'transactionNumber' : obj_to_edit.transactionNumber
+                    }
+                    serializer = paymentSerializer(obj_to_edit, data=obj_to_put)
+                    if serializer.is_valid():
+                        serializer.save()
+                    else:
+                        return Response({"code": 500, "message": serializer.errorData}) 
+                    return Response({"code": 200, "message": serializer.data})
                 else:
                     return Response({"code": 403, "message": "Not Authorized"}) 
             except token.DoesNotExist:
@@ -475,15 +530,16 @@ class payViewSet(APIView):
                     errorData = ''
                     errorFlag = 0
                     for i in request.data['reservations']:
+                        obj_to_edit = payment.objects.get(rez=i)
                         obj_to_put = {
-                            "id" : 0,
+                            "id" : obj_to_edit.id,
                             "rez" : i,
                             'prepaidDate' : request.data['prepaidDate'],
                             'payDate' : request.data['payDate'],
                             'cancelationDate' : None,
                             'transactionNumber' : request.data['transactionNumber']
                         }
-                        serializer = paymentSerializer(data=obj_to_put)    
+                        serializer = paymentSerializer(obj_to_edit, data=obj_to_put)
                         if serializer.is_valid():
                             serializer.save()
                         else:
@@ -547,6 +603,51 @@ class rezViewSet(viewsets.ModelViewSet):
         except user.DoesNotExist:
             return Response({"code": 403, "message": "Not Authorized"})          
 
+    def update(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if request.data['user'] == oUser.id:
+                    obj_to_edit = rez.objects.filter(id = request.data["id"])
+                    serializer = rezSerializer(obj_to_edit, data=request.data)                                      
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data)
+                    return Response(serializer.errors)                    
+                else:
+                    return Response({"code": 500, "message": "You dont own that reservation"})
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})    
+
+    def destroy(self, request, pk=None):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                if request.data['user'] == oUser.id:
+                    obj_to_edit = rez.objects.filter(id = request.data["id"])
+                    obj_edited = obj_to_edit
+                    obj_edited.deleted_at = today
+                    serializer = rezSerializer(obj_to_edit, data=obj_edited)                                      
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data)
+                    return Response(serializer.errors)                    
+                else:
+                    return Response({"code": 500, "message": "You dont own that reservation"})
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})    
 
 
 class auditViewSet(viewsets.ModelViewSet):
