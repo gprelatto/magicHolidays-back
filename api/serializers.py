@@ -55,16 +55,16 @@ class customerSerializer(serializers.HyperlinkedModelSerializer):
         model = customer
         fields = ['id','fullname','mail','phone','country']
 
-class paymentSerializer(serializers.HyperlinkedModelSerializer):
-    rez = serializers.PrimaryKeyRelatedField(queryset=rez.objects.all(), many=False)
+class paymentSerializer(serializers.ModelSerializer):
     class Meta:
+        depth = 1
         model = payment
         fields = ['id','rez','prepaidDate','payDate','cancelationDate','transactionNumber']
 
 class prepaidSerializer(serializers.HyperlinkedModelSerializer):
-    reservations = serializers.StringRelatedField(many=True)
     prepaidDate = serializers.CharField(required=False,allow_blank=True)
     class Meta:
+        depth = 1
         model = payment
         fields = ['id','reservations','prepaidDate']
 

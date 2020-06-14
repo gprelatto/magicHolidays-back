@@ -534,7 +534,7 @@ class payViewSet(APIView):
                         obj_to_put = {
                             "id" : obj_to_edit.id,
                             "rez" : i,
-                            'prepaidDate' : request.data['prepaidDate'],
+                            'prepaidDate' : obj_to_edit.prepaidDate,
                             'payDate' : request.data['payDate'],
                             'cancelationDate' : None,
                             'transactionNumber' : request.data['transactionNumber']
