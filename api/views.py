@@ -209,14 +209,18 @@ class userViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         if canCreate(request,'user') == True :
-            request.data._mutable = True
-            request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
-            request.data._mutable = False     
-            serializer = userSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors)
+            try:
+                oUserExists = user.objects.filter(mail = request.data["mail"])
+                return Response({"code": 500, "message": "User Exists!"}) 
+            except User.DoesNotExist:
+                request.data._mutable = True
+                request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
+                request.data._mutable = False     
+                serializer = userSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors)
         else:
             return Response({"code": 403, "message": "Not Authorized"})  
 
