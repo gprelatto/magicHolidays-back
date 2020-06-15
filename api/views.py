@@ -616,7 +616,7 @@ class rezViewSet(viewsets.ModelViewSet):
         except user.DoesNotExist:
             return Response({"code": 403, "message": "Not Authorized"})          
 
-    def update(self, request):
+    def update(self, request, pk=None):
         try:
             userMail = request.headers['mail']
             userToken = request.headers['token']            
