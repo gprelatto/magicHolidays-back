@@ -441,13 +441,13 @@ class prepaidViewSet(APIView):
                     for i in request.data['reservations']:
                         obj_to_put = {
                             "id" : 0,
-                            "rez" : str(i),
+                            "rez" :  i  ,
                             'prepaidDate' : request.data['prepaidDate'],
                             'payDate' : None,
                             'cancelationDate' : None,
                             'transactionNumber' : None
                         }
-                        serializer = paymentSerializer(data=obj_to_put)    
+                        serializer = paymentPostSerializer(data=obj_to_put)    
                         if serializer.is_valid():
                             serializer.save()
                         else :
@@ -552,7 +552,7 @@ class payViewSet(APIView):
                             'cancelationDate' : None,
                             'transactionNumber' : request.data['transactionNumber']
                         }
-                        serializer = paymentSerializer(obj_to_edit, data=obj_to_put)
+                        serializer = paymentPostSerializer(obj_to_edit, data=obj_to_put)
                         if serializer.is_valid():
                             serializer.save()
                         else:

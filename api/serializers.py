@@ -61,6 +61,13 @@ class paymentSerializer(serializers.ModelSerializer):
         model = payment
         fields = ['id','rez','prepaidDate','payDate','cancelationDate','transactionNumber']
 
+
+class paymentPostSerializer(serializers.HyperlinkedModelSerializer):
+    rez = serializers.PrimaryKeyRelatedField(queryset=rez.objects.all(), many=False)
+    class Meta:
+        model = payment
+        fields = ['id','rez','prepaidDate','payDate','cancelationDate','transactionNumber']
+
 class prepaidSerializer(serializers.HyperlinkedModelSerializer):
     prepaidDate = serializers.CharField(required=False,allow_blank=True)
     class Meta:

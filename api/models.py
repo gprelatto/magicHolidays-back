@@ -109,6 +109,9 @@ class payment(models.Model):
     updated_at = models.DateTimeField(null=True)    
     deleted_at = models.DateTimeField(null=True)
 
+    def soft_delete(self):
+        self.deleted_at = date.today()
+        self.save()
 
 class audit(models.Model):
     date = models.DateTimeField(auto_now_add=True)
