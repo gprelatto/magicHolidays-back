@@ -67,10 +67,9 @@ class getProfileView(APIView):
             return Response({"code": 403, "message": "Not Authorized"})
 
     def post(self, request, *args, **kwargs):
-        fMail = request.data['mail']
-        oUser = user.objects.get(mail = fMail)
-        request.data['password'] = oUser.password
         obj_to_edit = user.objects.filter(id = request.data["id"])
+        request.data['password'] = obj_to_edit.password
+        fMail = request.data['mail']
         serializer = userSerializer(obj_to_edit, data=request.data)        
         try:
             userMail = request.headers['mail']
