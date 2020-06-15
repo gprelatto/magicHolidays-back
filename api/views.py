@@ -35,7 +35,7 @@ class userTypeViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'userType') == True :
-            obj_to_edit = user_type.objects.filter(id = request.data["id"])
+            obj_to_edit = user_type.objects.get(id = request.data["id"])
             serializer = userTypeSerializer(obj_to_edit, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -189,7 +189,7 @@ class countryViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'country') == True :
-            obj_to_edit = country.objects.filter(id = request.data["id"])
+            obj_to_edit = country.objects.get(id = request.data["id"])
             serializer = countrySerializer(obj_to_edit, data=request.data)                    
             if serializer.is_valid():
                 serializer.save()
@@ -231,7 +231,7 @@ class userViewSet(viewsets.ModelViewSet):
             request.data._mutable = True
             request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
             request.data._mutable = False   
-            obj_to_edit = user.objects.filter(id = request.data["id"])
+            obj_to_edit = user.objects.get(id = request.data["id"])
             serializer = userSerializer(obj_to_edit, data=request.data)                                         
             if serializer.is_valid():
                 serializer.save()
@@ -264,7 +264,7 @@ class supplierViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'supplier') == True :
-            obj_to_edit = supplier.objects.filter(id = request.data["id"])
+            obj_to_edit = supplier.objects.get(id = request.data["id"])
             serializer = supplierSerializer(obj_to_edit, data=request.data)              
             if serializer.is_valid():
                 serializer.save()
@@ -298,7 +298,7 @@ class productCategoryViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'productCategory') == True :
-            obj_to_edit = product_category.objects.filter(id = request.data["id"])
+            obj_to_edit = product_category.objects.get(id = request.data["id"])
             serializer = productCategorySerializer(obj_to_edit, data=request.data)                          
             if serializer.is_valid():
                 serializer.save()
@@ -331,7 +331,7 @@ class productViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'product') == True :
-            obj_to_edit = product.objects.filter(id = request.data["id"])
+            obj_to_edit = product.objects.get(id = request.data["id"])
             serializer = productSerializer(obj_to_edit, data=request.data)                                      
             if serializer.is_valid():
                 serializer.save()
@@ -360,7 +360,7 @@ class customerViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors)
 
     def update(self, request, pk=None):
-        obj_to_edit = customer.objects.filter(id = request.data["id"])
+        obj_to_edit = customer.objects.get(id = request.data["id"])
         serializer = customerSerializer(obj_to_edit, data=request.data)                                      
         if serializer.is_valid():
             serializer.save()
@@ -612,7 +612,7 @@ class rezViewSet(viewsets.ModelViewSet):
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if request.data['user'] == oUser.id:
-                    obj_to_edit = rez.objects.filter(id = request.data["id"])
+                    obj_to_edit = rez.objects.get(id = request.data["id"])
                     serializer = rezSerializer(obj_to_edit, data=request.data)                                      
                     if serializer.is_valid():
                         serializer.save()
