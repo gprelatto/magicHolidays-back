@@ -233,7 +233,7 @@ class userViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         if canCreate(request,'user') == True :
             obj_to_edit = user.objects.get(id = request.data["id"])
-            if (request.data['password'] = ''):
+            if (request.data['password'] == ''):
                 request.data._mutable = True
                 request.data['password']  = obj_to_edit.password
                 request.data._mutable = False
