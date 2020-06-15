@@ -212,7 +212,7 @@ class userViewSet(viewsets.ModelViewSet):
             try:
                 oUserExists = user.objects.filter(mail = request.data["mail"])
                 return Response({"code": 500, "message": "User Exists!"}) 
-            except User.DoesNotExist:
+            except user.DoesNotExist:
                 request.data._mutable = True
                 request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
                 request.data._mutable = False     
