@@ -98,14 +98,22 @@ class updatePasswordView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
+            
             userMail = request.headers['mail']
             userToken = request.headers['token']   
-            fPassword = request.data['password']         
+            fPassword = request.data['password']    
             oUser = user.objects.get(mail = userMail)
-            userToUpdate = user.objects.get(mail = userMail)
-            userToUpdate.password = hashlib.md5(fPassword.encode()).hexdigest()
+            userEdited = {
+                'id' : oUser.id,
+                'user_type' : oUser.user_type.id,
+                'country' : oUser.country.id,
+                'password' : hashlib.md5(request.data['password'].encode()).hexdigest(),
+                'name'  : oUser.name,
+                'lastname' : oUser.lastname,
+                'mail' : oUser.mail
+            }
+            serializer = userSerializer(oUser,data=userEdited)        
             today = date.today()
-            serializer = userSerializer(instance=oUser,data=userToUpdate,partial=True)        
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (obj.user.user_type.description == 'Admin' or obj.user.mail == fMail):
