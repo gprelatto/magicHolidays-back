@@ -521,7 +521,7 @@ class payViewSet(APIView):
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (obj.user.user_type.description == 'Admin'):
-                    queryset = payment.objects.filter(prepaidDate__isnull=False)
+                    queryset = payment.objects.filter(prepaidDate__isnull=False).filter(payDate__isnull=True)
                     serializer = paymentSerializer(queryset, many=True)
                     return Response(serializer.data)             
                 else:
