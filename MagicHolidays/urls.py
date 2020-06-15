@@ -27,6 +27,7 @@ router.register(r'productCategories', views.productCategoryViewSet)
 router.register(r'products', views.productViewSet)
 router.register(r'customers', views.customerViewSet)
 router.register(r'reservations', views.rezViewSet)
+router.register(r'payments', views.paymentViewSet)
 router.register(r'audit', views.auditViewSet)
 
 # Wire up our API using automatic URL routing.
