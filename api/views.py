@@ -66,7 +66,7 @@ class getProfileView(APIView):
         except:
             return Response({"code": 403, "message": "Not Authorized"})
 
-    def put(self, request, pk, format=None):
+    def post(self, request, *args, **kwargs):
         fMail = request.data['mail']
         oUser = user.objects.get(mail = fMail)
         request.data['password'] = oUser.password
