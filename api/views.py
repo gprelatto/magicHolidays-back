@@ -643,10 +643,11 @@ class rezViewSet(viewsets.ModelViewSet):
             userMail = request.headers['mail']
             userToken = request.headers['token']            
             oUser = user.objects.get(mail = userMail)
+            oRez = rez.objects.get(id = pk)
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if request.data['user'] == oUser.id:
+                if oRez.user.id == oUser.id:
                     obj_to_edit = rez.objects.get(id = pk)
                     obj_edited = obj_to_edit
                     obj_edited.deleted_at = today
