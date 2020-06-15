@@ -210,7 +210,7 @@ class userViewSet(viewsets.ModelViewSet):
     def create(self, request):
         if canCreate(request,'user') == True :
             try:
-                oUserExists = user.objects.filter(mail = request.data["mail"])
+                oUserExists = user.objects.get(mail = request.data["mail"])
                 return Response({"code": 500, "message": "User Exists!"}) 
             except user.DoesNotExist:
                 request.data._mutable = True
