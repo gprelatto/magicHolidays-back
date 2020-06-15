@@ -647,7 +647,7 @@ class rezViewSet(viewsets.ModelViewSet):
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if request.data['user'] == oUser.id:
-                    obj_to_edit = rez.objects.filter(id = request.data["id"])
+                    obj_to_edit = rez.objects.get(id = request.data["id"])
                     obj_edited = obj_to_edit
                     obj_edited.deleted_at = today
                     serializer = rezSerializer(obj_to_edit, data=obj_edited)                                      
