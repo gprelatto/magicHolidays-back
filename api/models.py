@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from datetime import date
 
 class notification(models.Model):
     date_from = models.DateTimeField(null=True)
@@ -95,6 +95,9 @@ class rez(models.Model):
     updated_at = models.DateTimeField(null=True)    
     deleted_at = models.DateTimeField(null=True)
 
+    def soft_delete(self):
+        self.deleted_at = date.today()
+        self.save()
 
 class payment(models.Model):
     rez =  models.ForeignKey(rez, related_name='rel_payment_rez', on_delete=models.PROTECT)

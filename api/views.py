@@ -647,14 +647,17 @@ class rezViewSet(viewsets.ModelViewSet):
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if request.data['user'] == oUser.id:
-                    obj_to_edit = rez.objects.get(id = request.data["id"])
+                    obj_to_edit = rez.objects.get(id = pk)
                     obj_edited = obj_to_edit
                     obj_edited.deleted_at = today
-                    serializer = rezSerializer(obj_to_edit, data=obj_edited)                                      
-                    if serializer.is_valid():
-                        serializer.save()
-                        return Response(serializer.data)
-                    return Response(serializer.errors)                    
+                    self.object = self.get_object()
+                    self.object.soft_delete()               
+                    return Response({"code": 200, "message": "Reservation cancelled"})     
+                    # serializer = rezSerializer(obj_to_edit, data=serializers.serialize('json', [ obj_edited ]))                                      
+                    # if serializer.is_valid():
+                    #     serializer.save()
+                    #     return Response(serializer.data)
+                    #return Response(serializer.errors)                    
                 else:
                     return Response({"code": 500, "message": "You dont own that reservation"})
             except token.DoesNotExist:
