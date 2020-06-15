@@ -232,10 +232,15 @@ class userViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if canCreate(request,'user') == True :
-            request.data._mutable = True
-            request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
-            request.data._mutable = False   
             obj_to_edit = user.objects.get(id = request.data["id"])
+            if (request.data['password'] = ''):
+                request.data._mutable = True
+                request.data['password']  = obj_to_edit.password
+                request.data._mutable = False
+            else:
+                request.data._mutable = True
+                request.data['password']  = hashlib.md5(request.data['password'].encode()).hexdigest()
+                request.data._mutable = False   
             serializer = userSerializer(obj_to_edit, data=request.data)                                         
             if serializer.is_valid():
                 serializer.save()
