@@ -74,6 +74,7 @@ class customer(models.Model):
     mail =  models.CharField(max_length=100)
     phone =  models.CharField(max_length=80)
     country =  models.ForeignKey(country, related_name='rel_customer_country', on_delete=models.PROTECT)
+    created_by = models.ForeignKey(user, related_name='rel_customer_user', on_delete=models.PROTECT, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
