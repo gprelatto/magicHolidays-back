@@ -402,12 +402,24 @@ class customerViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, pk=None):
-        obj_to_edit = customer.objects.get(id = request.data["id"])
-        serializer = customerSerializer(obj_to_edit, data=request.data)                                      
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                request.data['created_by'] = oUser.id
+                obj_to_edit = customer.objects.get(id = request.data["id"])
+                serializer = customerSerializer(obj_to_edit, data=request.data)  
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors)
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 class paymentViewSet(viewsets.ModelViewSet):
     """
