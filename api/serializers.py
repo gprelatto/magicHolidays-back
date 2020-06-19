@@ -51,9 +51,10 @@ class productSerializer(serializers.HyperlinkedModelSerializer):
 
 class customerSerializer(serializers.HyperlinkedModelSerializer):
     country = serializers.PrimaryKeyRelatedField(queryset=country.objects.all(), many=False)
+    created_by = serializers.PrimaryKeyRelatedField(queryset=customer.objects.all(), many=False)
     class Meta:
         model = customer
-        fields = ['id','fullname','mail','phone','country']
+        fields = ['id','fullname','mail','phone','country','created_by']
 
 class paymentSerializer(serializers.ModelSerializer):
     class Meta:
