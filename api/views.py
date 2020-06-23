@@ -665,7 +665,7 @@ class rezViewSet(viewsets.ModelViewSet):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if request.data['user'] == oUser.id:
+                if request.data['user'] == oUser.id or oUser.user_type.description == 'Admin':
                     obj_to_edit = rez.objects.get(id = request.data["id"])
                     serializer = rezSerializer(obj_to_edit, data=request.data)                                      
                     if serializer.is_valid():
@@ -1121,6 +1121,148 @@ class detailedSales(APIView):
 
 
 
+class toPay(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        SELECT \
+                            c."name" ,\
+                            c.lastname ,\
+                            a."confirmationDate" ,\
+                            g.fullname ,\
+                            a."arrivalDate",\
+                            f.description  as Supplier,\
+                            e.description as Category,\
+                            d.description as Product,\
+                            a.total ,\
+                            a."confirmationNumber" ,\
+                            a."feeTotal" ,\
+                            a."feeUser" \
+                        FROM api_rez a\
+                        LEFT JOIN api_payment b on a.id = b.rez_id \
+                        join api_user c on a.user_id = c.id \
+                        join api_product d on a.product_id = d.id \
+                        join api_product_category e on d.product_category_id = e.id \
+                        join api_supplier f on f.id = e.supplier_id\
+                        join api_customer g on g.id = a.customer_id \
+                        where b.id is null\
+                    """
+                    cursor.execute(command)
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        SELECT \
+                            c."name" ,\
+                            c."lastname" ,\                            
+                            a."confirmationDate" ,\
+                            g.fullname ,\
+                            a."arrivalDate",\
+                            f.description  as Supplier,\
+                            e.description as Category,\
+                            d.description as Product,\
+                            a.total ,\
+                            a."confirmationNumber" ,\
+                            a."feeTotal" ,\
+                            a."feeUser" \
+                        FROM api_rez a\
+                        LEFT JOIN api_payment b on a.id = b.rez_id \
+                        join api_user c on a.user_id = c.id \
+                        join api_product d on a.product_id = d.id \
+                        join api_product_category e on d.product_category_id = e.id \
+                        join api_supplier f on f.id = e.supplier_id\
+                        join api_customer g on g.id = a.customer_id \
+                        where b.id is null and c.user_id = {0}\
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))    
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+
+class paid(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        SELECT \
+                            c."name" ,\
+                            c.lastname ,\
+                            a."confirmationDate" ,\
+                            g.fullname ,\
+                            a."arrivalDate",\
+                            f.description  as Supplier,\
+                            e.description as Category,\
+                            d.description as Product,\
+                            a.total ,\
+                            a."confirmationNumber" ,\
+                            a."feeTotal" ,\
+                            a."feeUser", \
+                            b."payDate" , \
+                            b."transactionNumber" \
+                        FROM api_rez a\
+                        JOIN api_payment b on a.id = b.rez_id \
+                        join api_user c on a.user_id = c.id \
+                        join api_product d on a.product_id = d.id \
+                        join api_product_category e on d.product_category_id = e.id \
+                        join api_supplier f on f.id = e.supplier_id\
+                        join api_customer g on g.id = a.customer_id \
+                        where b."payDate" is not null\
+                    """
+                    cursor.execute(command)
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        SELECT \
+                            c."name" ,\
+                            c."lastname" ,\                            
+                            a."confirmationDate" ,\
+                            g.fullname ,\
+                            a."arrivalDate",\
+                            f.description  as Supplier,\
+                            e.description as Category,\
+                            d.description as Product,\
+                            a.total ,\
+                            a."confirmationNumber" ,\
+                            a."feeTotal" ,\
+                            a."feeUser", \
+                            b."payDate" , \
+                            b."transactionNumber" \
+                        FROM api_rez a\
+                        JOIN api_payment b on a.id = b.rez_id \
+                        join api_user c on a.user_id = c.id \
+                        join api_product d on a.product_id = d.id \
+                        join api_product_category e on d.product_category_id = e.id \
+                        join api_supplier f on f.id = e.supplier_id\
+                        join api_customer g on g.id = a.customer_id \
+                        where b."payDate" is not null and c.user_id = {0}\
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))    
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
 def canCreate(request,endpoint):
     try:

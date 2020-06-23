@@ -47,5 +47,7 @@ urlpatterns = [
     path('detailedSales/', views.detailedSales.as_view(), name='detailedTotals'),
     path('prepay/', views.prepaidViewSet.as_view(), name='prepay'),
     path('pay/', views.payViewSet.as_view(), name='pay'),    
-    path('deletePayment/', views.payDeleteViewSet.as_view(), name='deletePayment')    
+    path('deletePayment/', views.payDeleteViewSet.as_view(), name='deletePayment'),
+    path('userPaid/', views.paid.as_view(), name='userPaid'),
+    path('userToPay/', views.toPay.as_view(), name='userToPay')
 ]
