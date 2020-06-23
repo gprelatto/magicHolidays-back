@@ -1163,7 +1163,7 @@ class toPay(APIView):
                     command = """\
                         SELECT \
                             c."name" ,\
-                            c."lastname" ,\                            
+                            c."lastname" ,\
                             a."confirmationDate" ,\
                             g.fullname ,\
                             a."arrivalDate",\
@@ -1235,7 +1235,7 @@ class paid(APIView):
                     command = """\
                         SELECT \
                             c."name" ,\
-                            c."lastname" ,\                            
+                            c."lastname" ,\
                             a."confirmationDate" ,\
                             g.fullname ,\
                             a."arrivalDate",\
