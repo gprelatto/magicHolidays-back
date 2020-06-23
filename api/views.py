@@ -1181,7 +1181,7 @@ class toPay(APIView):
                         join api_product_category e on d.product_category_id = e.id \
                         join api_supplier f on f.id = e.supplier_id\
                         join api_customer g on g.id = a.customer_id \
-                        where b.id is null and c.user_id = {0}\
+                        where b.id is null and a.user_id = {0}\
                     """.format(oUser.id)
                     cursor.execute(command)
                 return Response(dictfetchall(cursor))    
@@ -1255,7 +1255,7 @@ class paid(APIView):
                         join api_product_category e on d.product_category_id = e.id \
                         join api_supplier f on f.id = e.supplier_id\
                         join api_customer g on g.id = a.customer_id \
-                        where b."payDate" is not null and c.user_id = {0}\
+                        where b."payDate" is not null and a.user_id = {0}\
                     """.format(oUser.id)
                     cursor.execute(command)
                 return Response(dictfetchall(cursor))    
