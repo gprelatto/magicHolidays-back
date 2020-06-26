@@ -49,7 +49,39 @@ class userTypeViewSet(viewsets.ModelViewSet):
         serializer = userTypeSerializer(queryset, many=True)
         return Response(serializer.data)
 
+class notificationViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows taxes to be viewed or edited.
+    """
+    permission_classes = [checkAccess]
+    queryset = notification.objects.all()
+    serializer_class = notificationSerializer
+    
+    def create(self, request):
+        if canCreate(request,'userType') == True :
+            serializer = notificationSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
 
+    def update(self, request, pk=None):
+        if canCreate(request,'userType') == True :
+            obj_to_edit = notification.objects.get(id = request.data["id"])
+            serializer = notificationSerializer(obj_to_edit, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        else:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
+    def list(self, request):
+        queryset = notification.objects.all()
+        serializer = notificationSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class getProfileView(APIView):
@@ -150,7 +182,9 @@ class LoginView(APIView):
                                 'token' : obj.token,
                                 'mail' : oUser.mail,
                                 'fullname' : oUser.name + ' ' + oUser.lastname,
-                                'user_type' : oUser.user_type.id
+                                'user_type' : oUser.user_type.id,
+                                'lang' : oUser.country.lang,
+                                'feePercentage' : oUser.user_type.feePercentage
                             })               
                 except token.DoesNotExist:
                     kToken = oUser.mail + oUser.password + str(today)
@@ -161,7 +195,9 @@ class LoginView(APIView):
                             'token' : gToken,
                             'mail' : oUser.mail,
                             'fullname' : oUser.name + ' ' + oUser.lastname,
-                            'user_type' : oUser.user_type.id
+                            'user_type' : oUser.user_type.id,
+                            'lang' : oUser.country.lang,
+                            'feePercentage' : oUser.user_type.feePercentage
                         })
             else : 
                 return Response({"code": 403, "message": "Not Authorized"})  
@@ -1119,6 +1155,35 @@ class detailedSales(APIView):
         except user.DoesNotExist:
             return Response({"code": 403, "message": "Not Authorized"})  
 
+class travelAlerts(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        SELECT * FROM vw_travel_alerts
+                    """
+                    cursor.execute(command)
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        SELECT * FROM vw_travel_alerts WHERE user_id = {0}\
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))    
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
 
 
 class toPay(APIView):
@@ -1263,6 +1328,9 @@ class paid(APIView):
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
             return Response({"code": 403, "message": "Not Authorized"})  
+
+
+
 
 def canCreate(request,endpoint):
     try:

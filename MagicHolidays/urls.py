@@ -29,6 +29,7 @@ router.register(r'customers', views.customerViewSet)
 router.register(r'reservations', views.rezViewSet)
 router.register(r'payments', views.paymentViewSet)
 router.register(r'audit', views.auditViewSet)
+router.register(r'notifications', views.notificationViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -49,5 +50,8 @@ urlpatterns = [
     path('pay/', views.payViewSet.as_view(), name='pay'),    
     path('deletePayment/', views.payDeleteViewSet.as_view(), name='deletePayment'),
     path('userPaid/', views.paid.as_view(), name='userPaid'),
-    path('userToPay/', views.toPay.as_view(), name='userToPay')
+    path('userToPay/', views.toPay.as_view(), name='userToPay'),
+    path('travelAlerts/', views.travelAlerts.as_view(), name='travelAlerts')
+
+    
 ]

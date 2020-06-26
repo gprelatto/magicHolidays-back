@@ -17,6 +17,7 @@ class user_type(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    feePercentage = models.DecimalField(max_digits = 8,decimal_places = 2, null = True)
     def __str__(self):
         return '%s' % (self.description)   
 
@@ -40,6 +41,7 @@ class user(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    birth_date = models.DateTimeField(null=True)
     def __str__(self):
         return '%s' % (self.mail)   
 
@@ -78,6 +80,7 @@ class customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)    
+    contact_source = models.CharField(max_length=100, null = True)
     def __str__(self):
         return '%s' % (self.fullname)   
 
@@ -95,7 +98,8 @@ class rez(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)    
     deleted_at = models.DateTimeField(null=True)
-
+    tickets_count = models.DecimalField(max_digits = 8,decimal_places = 2, null = True) 
+    people_count = models.DecimalField(max_digits = 8,decimal_places = 2, null = True) 
     def soft_delete(self):
         self.deleted_at = date.today()
         self.save()

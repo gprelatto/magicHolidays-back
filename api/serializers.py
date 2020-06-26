@@ -5,7 +5,12 @@ from rest_framework import serializers
 class userTypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = user_type
-        fields = ['id','description']
+        fields = ['id','description', 'feePercentage']
+
+class notificationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = notification
+        fields = ['id','date_from','date_to', 'message']
 
 class countrySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -17,14 +22,14 @@ class userSerializer(serializers.HyperlinkedModelSerializer):
     country = serializers.PrimaryKeyRelatedField(queryset=country.objects.all(), many=False)
     class Meta:
         model = user
-        fields = ['id','user_type','country','password','name','lastname','mail','phone']
+        fields = ['id','user_type','country','password','name','lastname','mail','phone','birth_date']
  
 class getUserSerializer(serializers.HyperlinkedModelSerializer):
     user_type = serializers.PrimaryKeyRelatedField(queryset=user_type.objects.all(), many=False)
     country = serializers.PrimaryKeyRelatedField(queryset=country.objects.all(), many=False)
     class Meta:
         model = user
-        fields = ['id','user_type','country','name','lastname','mail','phone']
+        fields = ['id','user_type','country','name','lastname','mail','phone','birth_date']
 
 
 class loginSerializer(serializers.HyperlinkedModelSerializer):
@@ -54,7 +59,7 @@ class customerSerializer(serializers.HyperlinkedModelSerializer):
     created_by = serializers.PrimaryKeyRelatedField(queryset=user.objects.all(), many=False)
     class Meta:
         model = customer
-        fields = ['id','fullname','mail','phone','country','created_by']
+        fields = ['id','fullname','mail','phone','country','created_by','contact_source']
 
 class paymentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -100,7 +105,7 @@ class rezPrepaySerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=user.objects.all(), many=False, required=False)
     class Meta:
         model = rez
-        fields = ['id','product','customer','user','confirmationNumber','confirmationDate','arrivalDate','total','feeTotal','feeAgency','feeUser']
+        fields = ['id','product','customer','user','confirmationNumber','confirmationDate','arrivalDate','total','feeTotal','feeAgency','feeUser','tickets_count','people_count']
         depth = 1        
 
 class rezSerializer(serializers.HyperlinkedModelSerializer):
@@ -110,7 +115,7 @@ class rezSerializer(serializers.HyperlinkedModelSerializer):
     confirmationNumber = serializers.CharField(required=False,allow_blank=True)
     class Meta:
         model = rez
-        fields = ['id','product','customer','user','confirmationNumber','confirmationDate','arrivalDate','total','feeTotal','feeAgency','feeUser','deleted_at']
+        fields = ['id','product','customer','user','confirmationNumber','confirmationDate','arrivalDate','total','feeTotal','feeAgency','feeUser','deleted_at','tickets_count','people_count']
 
 class auditSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=user.objects.all(), many=False)
