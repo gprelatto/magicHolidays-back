@@ -1221,7 +1221,7 @@ class toPay(APIView):
                         join api_product_category e on d.product_category_id = e.id \
                         join api_supplier f on f.id = e.supplier_id\
                         join api_customer g on g.id = a.customer_id \
-                        where b.id is null\
+                        where b.id is null and a.deleted_at is null\
                     """
                     cursor.execute(command)
                 elif (oUser.user_type.description == 'Employee'):
@@ -1246,7 +1246,7 @@ class toPay(APIView):
                         join api_product_category e on d.product_category_id = e.id \
                         join api_supplier f on f.id = e.supplier_id\
                         join api_customer g on g.id = a.customer_id \
-                        where b.id is null and a.user_id = {0}\
+                        where b.id is null and a.user_id = {0} and a.deleted_at is null\
                     """.format(oUser.id)
                     cursor.execute(command)
                 return Response(dictfetchall(cursor))    
