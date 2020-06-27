@@ -83,10 +83,10 @@ WSGI_APPLICATION = 'MagicHolidays.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dbommplhkogg50',
-        'USER': 'uhgkbxajvrkqnl',
-        'PASSWORD': '94da5245d5c41a08a6cff3825e020f9c3dc72482100dbd902a4831826cd34281',
-        'HOST': 'ec2-52-87-58-157.compute-1.amazonaws.com',
+        'NAME': 'd32f32ie70kt4c',
+        'USER': 'ryufeozuroalsn',
+        'PASSWORD': 'e873ca55cf564847cd91a04fe9b49f728c528a751f5e6b961ec6a321df540fb5',
+        'HOST': 'ec2-52-72-65-76.compute-1.amazonaws.com',
         'PORT': '5432',
     }
     # 'default': {

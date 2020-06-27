@@ -121,7 +121,7 @@ class audit(models.Model):
 
 class token(models.Model):
     date = models.DateField(null=True)
-    user =  models.ForeignKey(user, related_name='rel_token_user', on_delete=models.PROTECT)
+    user =  models.ForeignKey(user, related_name='rel_token_user', null=True , on_delete=models.SET_NULL)
     token =  models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
