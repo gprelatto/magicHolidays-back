@@ -1028,6 +1028,35 @@ class widgetsData(APIView):
         except user.DoesNotExist:
             return Response({"code": 403, "message": "Not Authorized"})  
 
+class salesByProvider(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        select * from vw_providerSales_admin
+                    """
+                    cursor.execute(command)
+                elif (oUser.user_type.description == 'Employee'):
+                    command = """\
+                        select * from vw_providerSales_employee where id = {0}
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                return Response(dictfetchall(cursor))    
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized"})  
+
 
 class detailedSales(APIView):
     permission_classes = [checkAccess]
