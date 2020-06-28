@@ -959,39 +959,9 @@ class salesByCountry(APIView):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 cursor = connection.cursor()
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
-                    cursor.execute('\
-                        select \
-                            cy.description as key,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        join api_country cy on cy.id = c.country_id \
-                        group by 1\
-                        order by 1\
-                    ')
+                    cursor.execute('select * from vw_sales_country')
                 elif (oUser.user_type.description == 'Employee'):
-                    command = """\
-                        select \
-                            cy.description as key,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        join api_country cy on cy.id = c.country_id \
-                        where r.user_id = {0} \
-                        group by 1\
-                        order by 1\
-                    """.format(oUser.id)
-                    cursor.execute(command)
+                   return Response({"code": 403, "message": "Not Authorized"})
                 return Response(dictfetchall(cursor))    
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
