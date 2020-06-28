@@ -1014,86 +1014,12 @@ class widgetsData(APIView):
                 cursor = connection.cursor()
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     command = """\
-                        select \
-                            'Total Sales' as Widget,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date)\
-                        union all \
-                        select \
-                            'Total Revenue' as Widget,\
-                            SUM(r.total) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date)\
-                        union all \
-                        select \
-                            'Total Fees' as Widget,\
-                            SUM(r."feeUser") TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date)\
+                        select * from vw_widgets_admin
                     """
                     cursor.execute(command)
                 elif (oUser.user_type.description == 'Employee'):
                     command = """\
-                        select \
-                            'Total Sales' as Widget,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
-                        union all \
-                        select \
-                            'Total Revenue' as Widget,\
-                            SUM(r.total) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
-                        union all \
-                        select \
-                            'Total Fees' as Widget,\
-                            SUM(r."feeUser") TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
+                        select * from vw_widgets_empolyee where id = {0}
                     """.format(oUser.id)
                     cursor.execute(command)
                 return Response(dictfetchall(cursor))    
