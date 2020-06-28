@@ -1019,7 +1019,7 @@ class widgetsData(APIView):
                     cursor.execute(command)
                 elif (oUser.user_type.description == 'Employee'):
                     command = """\
-                        select * from vw_widgets_empolyee where id = {0}
+                        select * from vw_widgets_employee where id = {0}
                     """.format(oUser.id)
                     cursor.execute(command)
                 return Response(dictfetchall(cursor))    
