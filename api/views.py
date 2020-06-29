@@ -1004,10 +1004,10 @@ class widgetsData(APIView):
                         select * from vw_widgets_employee where id = {0}
                     """.format(oUser.id)
                     cursor.execute(command)
-                    if cursor.rowcount > 0:
-                        return Response(dictfetchall(cursor))    
-                    else:
-                        return Response({"code": 200, "message": "No Data To Display"}) 
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1036,10 +1036,10 @@ class salesByProvider(APIView):
                         select * from vw_providerSales_employee where id = {0}
                     """.format(oUser.id)
                     cursor.execute(command)
-                    if cursor.rowcount > 0:
-                        return Response(dictfetchall(cursor))    
-                    else:
-                        return Response({"code": 200, "message": "No Data To Display"})                     
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"})                     
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
