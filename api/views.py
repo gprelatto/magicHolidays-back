@@ -407,7 +407,7 @@ class customerViewSet(viewsets.ModelViewSet):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     queryset = customer.objects.all()
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     queryset = customer.objects.filter(created_by = oUser.id)
                 serializer = customerSerializer(queryset, many=True)
                 return Response(serializer.data)    
@@ -665,7 +665,7 @@ class rezViewSet(viewsets.ModelViewSet):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     queryset = rez.objects.all()
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     queryset = rez.objects.filter(user = oUser.id)
                 serializer = rezSerializer(queryset, many=True)
                 return Response(serializer.data)    
@@ -795,7 +795,7 @@ class getTotals(APIView):
                         left join api_payment py on py.rez_id = r.id \
                         group by 1,2                  \
                     ')
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         select \
                             u.name, \
@@ -865,7 +865,7 @@ class getMonthlyTotals(APIView):
                         group by 1,2\
                         order by 1,2\
                     ')
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         select \
                             EXTRACT(YEAR from r."confirmationDate") as Year,\
@@ -928,7 +928,7 @@ class salesByProduct(APIView):
                         group by 1\
                         order by 1\
                     ')
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         select \
                             p.description as key,\
@@ -969,7 +969,7 @@ class salesByCountry(APIView):
                 cursor = connection.cursor()
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     cursor.execute('select * from vw_sales_country')
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                    return Response({"code": 403, "message": "Not Authorized"})
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
@@ -997,7 +997,7 @@ class widgetsData(APIView):
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     command = """select * from vw_widgets_admin"""
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """select * from vw_widgets_employee where id = {0}""".format(oUser.id)
                     cursor.execute(command)
                 if cursor.rowcount > 0:
@@ -1027,7 +1027,7 @@ class salesByProvider(APIView):
                         select * from vw_providerSales_admin
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         select * from vw_providerSales_employee where id = {0}
                     """.format(oUser.id)
@@ -1060,7 +1060,7 @@ class salesByEmployee(APIView):
                         select * from vw_sales_employee
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     return Response({"code": 403, "message": "Not Authorized"})  
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))
@@ -1144,7 +1144,7 @@ class travelAlerts(APIView):
                         SELECT * FROM vw_travel_alerts
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         SELECT * FROM vw_travel_alerts WHERE user_id = {0}\
                     """.format(oUser.id)
@@ -1198,7 +1198,7 @@ class toPay(APIView):
                         where b.id is null and a.deleted_at is null\
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         SELECT \
                             c."name" ,\
@@ -1273,7 +1273,7 @@ class paid(APIView):
                         where b."payDate" is not null\
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         SELECT \
                             c."name" ,\
@@ -1320,8 +1320,6 @@ def canCreate(request,endpoint):
             try:
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     return True
-                elif (oUser.user_type.description == 'Employee'):
-                    return False
                 else:
                     return False
             except token.DoesNotExist:
