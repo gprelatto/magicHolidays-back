@@ -819,7 +819,10 @@ class getTotals(APIView):
                         group by 1,2                 \
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -887,7 +890,10 @@ class getMonthlyTotals(APIView):
                         order by 1,2\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))   
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -939,7 +945,10 @@ class salesByProduct(APIView):
                         order by 1\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))   
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -962,7 +971,10 @@ class salesByCountry(APIView):
                     cursor.execute('select * from vw_sales_country')
                 elif (oUser.user_type.description == 'Employee'):
                    return Response({"code": 403, "message": "Not Authorized"})
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -992,7 +1004,10 @@ class widgetsData(APIView):
                         select * from vw_widgets_employee where id = {0}
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                    if cursor.rowcount > 0:
+                        return Response(dictfetchall(cursor))    
+                    else:
+                        return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1021,7 +1036,10 @@ class salesByProvider(APIView):
                         select * from vw_providerSales_employee where id = {0}
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                    if cursor.rowcount > 0:
+                        return Response(dictfetchall(cursor))    
+                    else:
+                        return Response({"code": 200, "message": "No Data To Display"})                     
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1048,7 +1066,10 @@ class salesByEmployee(APIView):
                     cursor.execute(command)
                 elif (oUser.user_type.description == 'Employee'):
                     return Response({"code": 403, "message": "Not Authorized"})  
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"})   
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1098,7 +1119,10 @@ class detailedSales(APIView):
                         where r."confirmationDate" between '{0}' and '{1}'\
                     """.format(request.data['dateFrom'],request.data['dateTo'])
                     cursor.execute(command)
-                    return Response(dictfetchall(cursor))    
+                    if cursor.rowcount > 0:
+                        return Response(dictfetchall(cursor))    
+                    else:
+                        return Response({"code": 200, "message": "No Data To Display"}) 
                 else:
                     return Response({"code": 403, "message": "Not Authorized"})  
             except token.DoesNotExist:
@@ -1129,7 +1153,10 @@ class travelAlerts(APIView):
                         SELECT * FROM vw_travel_alerts WHERE user_id = {0}\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1200,7 +1227,10 @@ class toPay(APIView):
                         where b.id is null and a.user_id = {0} and a.deleted_at is null\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1274,7 +1304,10 @@ class paid(APIView):
                         where b."payDate" is not null and a.user_id = {0}\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display"}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
