@@ -995,19 +995,15 @@ class widgetsData(APIView):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 cursor = connection.cursor()
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
-                    command = """\
-                        select * from vw_widgets_admin
-                    """
+                    command = """select * from vw_widgets_admin"""
                     cursor.execute(command)
                 elif (oUser.user_type.description == 'Employee'):
-                    command = """\
-                        select * from vw_widgets_employee where id = {0}
-                    """.format(oUser.id)
+                    command = """select * from vw_widgets_employee where id = {0}""".format(oUser.id)
                     cursor.execute(command)
                 if cursor.rowcount > 0:
-                    return Response(dictfetchall(cursor))    
+                    return Response(dictfetchall(cursor))
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display"})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1037,9 +1033,9 @@ class salesByProvider(APIView):
                     """.format(oUser.id)
                     cursor.execute(command)
                 if cursor.rowcount > 0:
-                    return Response(dictfetchall(cursor))    
+                    return Response(dictfetchall(cursor))
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"})                     
+                    return Response({"code": 200, "message": "No Data To Display"})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1067,9 +1063,9 @@ class salesByEmployee(APIView):
                 elif (oUser.user_type.description == 'Employee'):
                     return Response({"code": 403, "message": "Not Authorized"})  
                 if cursor.rowcount > 0:
-                    return Response(dictfetchall(cursor))    
+                    return Response(dictfetchall(cursor))
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"})   
+                    return Response({"code": 200, "message": "No Data To Display"})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
