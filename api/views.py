@@ -822,7 +822,7 @@ class getTotals(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -893,7 +893,7 @@ class getMonthlyTotals(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -948,7 +948,7 @@ class salesByProduct(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -974,7 +974,7 @@ class salesByCountry(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1003,7 +1003,7 @@ class widgetsData(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"})
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1035,7 +1035,7 @@ class salesByProvider(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"})
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1065,7 +1065,7 @@ class salesByEmployee(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"})
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1118,7 +1118,7 @@ class detailedSales(APIView):
                     if cursor.rowcount > 0:
                         return Response(dictfetchall(cursor))    
                     else:
-                        return Response({"code": 200, "message": "No Data To Display"}) 
+                        return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
                 else:
                     return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
             except token.DoesNotExist:
@@ -1152,7 +1152,7 @@ class travelAlerts(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1226,7 +1226,7 @@ class toPay(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
@@ -1303,7 +1303,7 @@ class paid(APIView):
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))    
                 else:
-                    return Response({"code": 200, "message": "No Data To Display"}) 
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
