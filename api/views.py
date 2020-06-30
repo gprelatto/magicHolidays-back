@@ -31,7 +31,7 @@ class userTypeViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'userType') == True :
@@ -42,7 +42,7 @@ class userTypeViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
         queryset = user_type.objects.all()
@@ -65,7 +65,7 @@ class notificationViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'userType') == True :
@@ -76,7 +76,7 @@ class notificationViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
         queryset = notification.objects.all()
@@ -96,7 +96,7 @@ class getProfileView(APIView):
             serializer = getUserSerializer(queryset, many=True)
             return Response(serializer.data)
         except:
-            return Response({"code": 403, "message": "Not Authorized"})
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})
 
     def post(self, request, *args, **kwargs):
         obj_to_edit = user.objects.get(id = request.data["id"])
@@ -116,11 +116,11 @@ class getProfileView(APIView):
                         return Response(serializer.data)
                     return Response(serializer.errors)               
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class updatePasswordView(APIView):
@@ -154,11 +154,11 @@ class updatePasswordView(APIView):
                         return Response(serializer.data)
                     return Response(serializer.errors)               
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class LoginView(APIView):
     permission_classes = []
@@ -200,9 +200,9 @@ class LoginView(APIView):
                             'feePercentage' : oUser.user_type.feePercentage
                         })
             else : 
-                return Response({"code": 403, "message": "Not Authorized"})  
+                return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class countryViewSet(viewsets.ModelViewSet):
@@ -225,7 +225,7 @@ class countryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'country') == True :
@@ -236,7 +236,7 @@ class countryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class userViewSet(viewsets.ModelViewSet):
     """
@@ -262,7 +262,7 @@ class userViewSet(viewsets.ModelViewSet):
                     return Response(serializer.data)
                 return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
         queryset = user.objects.all()
@@ -287,7 +287,7 @@ class userViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class supplierViewSet(viewsets.ModelViewSet):
     """
@@ -309,7 +309,7 @@ class supplierViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'supplier') == True :
@@ -320,7 +320,7 @@ class supplierViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
  
 
 class productCategoryViewSet(viewsets.ModelViewSet):
@@ -343,7 +343,7 @@ class productCategoryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'productCategory') == True :
@@ -354,7 +354,7 @@ class productCategoryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class productViewSet(viewsets.ModelViewSet):
     """
@@ -376,7 +376,7 @@ class productViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'product') == True :
@@ -387,7 +387,7 @@ class productViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class customerViewSet(viewsets.ModelViewSet):
     """
@@ -414,7 +414,7 @@ class customerViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
  
     def create(self, request):
         try:
@@ -433,7 +433,7 @@ class customerViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 
@@ -455,7 +455,7 @@ class customerViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class paymentViewSet(viewsets.ModelViewSet):
     """
@@ -498,11 +498,11 @@ class prepaidViewSet(APIView):
                     serializer = rezPrepaySerializer(queryset, many=True)
                     return Response(serializer.data)             
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def post(self, request, *args, **kwargs):
         try:
@@ -535,11 +535,11 @@ class prepaidViewSet(APIView):
                     else :
                         return Response({"code": 200, "message": "All payments succesfully generated"})
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class payDeleteViewSet(APIView):
@@ -575,11 +575,11 @@ class payDeleteViewSet(APIView):
                         return Response({"code": 500, "message": serializer.errorData}) 
                     return Response({"code": 200, "message": serializer.data})
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class payViewSet(APIView):
     """
@@ -602,11 +602,11 @@ class payViewSet(APIView):
                     serializer = paymentSerializer(queryset, many=True)
                     return Response(serializer.data)             
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def post(self, request, *args, **kwargs):
         try:
@@ -640,11 +640,11 @@ class payViewSet(APIView):
                     else :
                         return Response({"code": 200, "message": "All payments succesfully generated"})
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class rezViewSet(viewsets.ModelViewSet):
@@ -672,7 +672,7 @@ class rezViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def create(self, request):
         try:
@@ -691,7 +691,7 @@ class rezViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})          
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})         
 
     def update(self, request, pk=None):
         try:
@@ -713,7 +713,7 @@ class rezViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})    
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})   
 
     def destroy(self, request, pk=None):
         try:
@@ -741,7 +741,7 @@ class rezViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})    
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})   
 
 
 class auditViewSet(viewsets.ModelViewSet):
@@ -826,7 +826,7 @@ class getTotals(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class getMonthlyTotals(APIView):
@@ -897,7 +897,7 @@ class getMonthlyTotals(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class salesByProduct(APIView):
@@ -952,7 +952,7 @@ class salesByProduct(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class salesByCountry(APIView):
     permission_classes = [checkAccess]
@@ -978,7 +978,7 @@ class salesByCountry(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class widgetsData(APIView):
@@ -1007,7 +1007,7 @@ class widgetsData(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class salesByProvider(APIView):
     permission_classes = [checkAccess]
@@ -1039,7 +1039,7 @@ class salesByProvider(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class salesByEmployee(APIView):
@@ -1061,7 +1061,7 @@ class salesByEmployee(APIView):
                     """
                     cursor.execute(command)
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"})  
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
                 if cursor.rowcount > 0:
                     return Response(dictfetchall(cursor))
                 else:
@@ -1069,7 +1069,7 @@ class salesByEmployee(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class detailedSales(APIView):
     permission_classes = [checkAccess]
@@ -1120,11 +1120,11 @@ class detailedSales(APIView):
                     else:
                         return Response({"code": 200, "message": "No Data To Display"}) 
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"})  
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class travelAlerts(APIView):
     permission_classes = [checkAccess]
@@ -1156,7 +1156,7 @@ class travelAlerts(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 
@@ -1230,7 +1230,7 @@ class toPay(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class paid(APIView):
@@ -1307,7 +1307,7 @@ class paid(APIView):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 
