@@ -1176,6 +1176,7 @@ class toPay(APIView):
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c.lastname ,\
                             a."confirmationDate" ,\
@@ -1201,6 +1202,7 @@ class toPay(APIView):
                 else:
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c."lastname" ,\
                             a."confirmationDate" ,\
@@ -1249,6 +1251,7 @@ class paid(APIView):
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c.lastname ,\
                             a."confirmationDate" ,\
@@ -1276,6 +1279,7 @@ class paid(APIView):
                 else:
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c."lastname" ,\
                             a."confirmationDate" ,\
