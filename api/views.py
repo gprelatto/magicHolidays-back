@@ -148,7 +148,7 @@ class updatePasswordView(APIView):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if (obj.user.user_type.description == 'Admin' or obj.user.mail == fMail):
+                if (obj.user.user_type.description == 'Admin' or obj.user.mail == userMail):
                     if serializer.is_valid():
                         serializer.save()
                         return Response(serializer.data)
