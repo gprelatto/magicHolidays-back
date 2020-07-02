@@ -31,7 +31,7 @@ class userTypeViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'userType') == True :
@@ -42,7 +42,7 @@ class userTypeViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
         queryset = user_type.objects.all()
@@ -65,7 +65,7 @@ class notificationViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'userType') == True :
@@ -76,7 +76,7 @@ class notificationViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
         queryset = notification.objects.all()
@@ -96,7 +96,7 @@ class getProfileView(APIView):
             serializer = getUserSerializer(queryset, many=True)
             return Response(serializer.data)
         except:
-            return Response({"code": 403, "message": "Not Authorized"})
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})
 
     def post(self, request, *args, **kwargs):
         obj_to_edit = user.objects.get(id = request.data["id"])
@@ -116,11 +116,11 @@ class getProfileView(APIView):
                         return Response(serializer.data)
                     return Response(serializer.errors)               
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class updatePasswordView(APIView):
@@ -154,11 +154,11 @@ class updatePasswordView(APIView):
                         return Response(serializer.data)
                     return Response(serializer.errors)               
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class LoginView(APIView):
     permission_classes = []
@@ -200,9 +200,9 @@ class LoginView(APIView):
                             'feePercentage' : oUser.user_type.feePercentage
                         })
             else : 
-                return Response({"code": 403, "message": "Not Authorized"})  
+                return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class countryViewSet(viewsets.ModelViewSet):
@@ -225,7 +225,7 @@ class countryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'country') == True :
@@ -236,7 +236,7 @@ class countryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class userViewSet(viewsets.ModelViewSet):
     """
@@ -262,7 +262,7 @@ class userViewSet(viewsets.ModelViewSet):
                     return Response(serializer.data)
                 return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
         queryset = user.objects.all()
@@ -287,7 +287,7 @@ class userViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class supplierViewSet(viewsets.ModelViewSet):
     """
@@ -309,7 +309,7 @@ class supplierViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'supplier') == True :
@@ -320,7 +320,7 @@ class supplierViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
  
 
 class productCategoryViewSet(viewsets.ModelViewSet):
@@ -343,7 +343,7 @@ class productCategoryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'productCategory') == True :
@@ -354,7 +354,7 @@ class productCategoryViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class productViewSet(viewsets.ModelViewSet):
     """
@@ -376,7 +376,7 @@ class productViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def update(self, request, pk=None):
         if canCreate(request,'product') == True :
@@ -387,7 +387,7 @@ class productViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             return Response(serializer.errors)
         else:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class customerViewSet(viewsets.ModelViewSet):
     """
@@ -407,14 +407,14 @@ class customerViewSet(viewsets.ModelViewSet):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     queryset = customer.objects.all()
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     queryset = customer.objects.filter(created_by = oUser.id)
                 serializer = customerSerializer(queryset, many=True)
                 return Response(serializer.data)    
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
  
     def create(self, request):
         try:
@@ -433,7 +433,7 @@ class customerViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 
@@ -455,7 +455,7 @@ class customerViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class paymentViewSet(viewsets.ModelViewSet):
     """
@@ -498,11 +498,11 @@ class prepaidViewSet(APIView):
                     serializer = rezPrepaySerializer(queryset, many=True)
                     return Response(serializer.data)             
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def post(self, request, *args, **kwargs):
         try:
@@ -535,11 +535,11 @@ class prepaidViewSet(APIView):
                     else :
                         return Response({"code": 200, "message": "All payments succesfully generated"})
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class payDeleteViewSet(APIView):
@@ -575,11 +575,11 @@ class payDeleteViewSet(APIView):
                         return Response({"code": 500, "message": serializer.errorData}) 
                     return Response({"code": 200, "message": serializer.data})
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class payViewSet(APIView):
     """
@@ -602,11 +602,11 @@ class payViewSet(APIView):
                     serializer = paymentSerializer(queryset, many=True)
                     return Response(serializer.data)             
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def post(self, request, *args, **kwargs):
         try:
@@ -640,11 +640,11 @@ class payViewSet(APIView):
                     else :
                         return Response({"code": 200, "message": "All payments succesfully generated"})
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"}) 
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []})
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class rezViewSet(viewsets.ModelViewSet):
@@ -665,14 +665,14 @@ class rezViewSet(viewsets.ModelViewSet):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     queryset = rez.objects.all()
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     queryset = rez.objects.filter(user = oUser.id)
                 serializer = rezSerializer(queryset, many=True)
                 return Response(serializer.data)    
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def create(self, request):
         try:
@@ -691,7 +691,7 @@ class rezViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})          
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})         
 
     def update(self, request, pk=None):
         try:
@@ -713,7 +713,7 @@ class rezViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})    
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})   
 
     def destroy(self, request, pk=None):
         try:
@@ -741,7 +741,7 @@ class rezViewSet(viewsets.ModelViewSet):
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})    
+            return Response({"code": 403, "message": "Not Authorized", "data" : []})   
 
 
 class auditViewSet(viewsets.ModelViewSet):
@@ -795,7 +795,7 @@ class getTotals(APIView):
                         left join api_payment py on py.rez_id = r.id \
                         group by 1,2                  \
                     ')
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         select \
                             u.name, \
@@ -819,11 +819,14 @@ class getTotals(APIView):
                         group by 1,2                 \
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class getMonthlyTotals(APIView):
@@ -862,7 +865,7 @@ class getMonthlyTotals(APIView):
                         group by 1,2\
                         order by 1,2\
                     ')
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         select \
                             EXTRACT(YEAR from r."confirmationDate") as Year,\
@@ -887,11 +890,14 @@ class getMonthlyTotals(APIView):
                         order by 1,2\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))   
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class salesByProduct(APIView):
@@ -922,7 +928,7 @@ class salesByProduct(APIView):
                         group by 1\
                         order by 1\
                     ')
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         select \
                             p.description as key,\
@@ -939,11 +945,14 @@ class salesByProduct(APIView):
                         order by 1\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))   
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class salesByCountry(APIView):
     permission_classes = [checkAccess]
@@ -959,44 +968,17 @@ class salesByCountry(APIView):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 cursor = connection.cursor()
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
-                    cursor.execute('\
-                        select \
-                            cy.description as key,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        join api_country cy on cy.id = c.country_id \
-                        group by 1\
-                        order by 1\
-                    ')
-                elif (oUser.user_type.description == 'Employee'):
-                    command = """\
-                        select \
-                            cy.description as key,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        join api_country cy on cy.id = c.country_id \
-                        where r.user_id = {0} \
-                        group by 1\
-                        order by 1\
-                    """.format(oUser.id)
-                    cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                    cursor.execute('select * from vw_sales_country')
+                else:
+                   return Response({"code": 403, "message": "Not Authorized"})
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class widgetsData(APIView):
@@ -1013,95 +995,81 @@ class widgetsData(APIView):
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 cursor = connection.cursor()
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
-                    command = """\
-                        select \
-                            'Total Sales' as Widget,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date)\
-                        union all \
-                        select \
-                            'Total Revenue' as Widget,\
-                            SUM(r.total) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date)\
-                        union all \
-                        select \
-                            'Total Fees' as Widget,\
-                            SUM(r."feeUser") TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date)\
-                    """
+                    command = """select * from vw_widgets_admin"""
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
-                    command = """\
-                        select \
-                            'Total Sales' as Widget,\
-                            count(*) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
-                        union all \
-                        select \
-                            'Total Revenue' as Widget,\
-                            SUM(r.total) TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
-                        union all \
-                        select \
-                            'Total Fees' as Widget,\
-                            SUM(r."feeUser") TotalSales\
-                        from api_rez r\
-                        join api_user u on r.user_id = u.id \
-                        join api_customer c on r.customer_id = c.id \
-                        join api_product p on p.id = r.product_id \
-                        join api_product_category pc on pc.id = p.product_category_id \
-                        join api_supplier s on s.id = pc.supplier_id \
-                        join api_country cy on cy.id = c.country_id \
-                        left join api_payment py on py.rez_id = r.id \
-                        where cast( r."confirmationDate" as date) = cast (now() as date) and r.user_id = {0} \
-                    """.format(oUser.id)
+                else:
+                    command = """select * from vw_widgets_employee where id = {0}""".format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
+class salesByProvider(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        select * from vw_providerSales_admin
+                    """
+                    cursor.execute(command)
+                else:
+                    command = """\
+                        select * from vw_providerSales_employee where id = {0}
+                    """.format(oUser.id)
+                    cursor.execute(command)
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
+
+
+class salesByEmployee(APIView):
+    permission_classes = [checkAccess]
+    queryset = rez.objects.all()
+
+    def get(self, request):
+        try:
+            userMail = request.headers['mail']
+            userToken = request.headers['token']            
+            oUser = user.objects.get(mail = userMail)
+            today = date.today()
+            try:
+                obj = token.objects.get(user = oUser.id,date = today,token = userToken)
+                cursor = connection.cursor()
+                if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
+                    command = """\
+                        select * from vw_sales_employee
+                    """
+                    cursor.execute(command)
+                else:
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
+            except token.DoesNotExist:
+                return Response({"code": 500, "message": "Invalid Token"}) 
+        except user.DoesNotExist:
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class detailedSales(APIView):
     permission_classes = [checkAccess]
@@ -1147,13 +1115,16 @@ class detailedSales(APIView):
                         where r."confirmationDate" between '{0}' and '{1}'\
                     """.format(request.data['dateFrom'],request.data['dateTo'])
                     cursor.execute(command)
-                    return Response(dictfetchall(cursor))    
+                    if cursor.rowcount > 0:
+                        return Response(dictfetchall(cursor))    
+                    else:
+                        return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
                 else:
-                    return Response({"code": 403, "message": "Not Authorized"})  
+                    return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 class travelAlerts(APIView):
     permission_classes = [checkAccess]
@@ -1173,16 +1144,19 @@ class travelAlerts(APIView):
                         SELECT * FROM vw_travel_alerts
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         SELECT * FROM vw_travel_alerts WHERE user_id = {0}\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 
@@ -1202,6 +1176,7 @@ class toPay(APIView):
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c.lastname ,\
                             a."confirmationDate" ,\
@@ -1224,9 +1199,10 @@ class toPay(APIView):
                         where b.id is null and a.deleted_at is null\
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c."lastname" ,\
                             a."confirmationDate" ,\
@@ -1249,11 +1225,14 @@ class toPay(APIView):
                         where b.id is null and a.user_id = {0} and a.deleted_at is null\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 class paid(APIView):
@@ -1272,6 +1251,7 @@ class paid(APIView):
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c.lastname ,\
                             a."confirmationDate" ,\
@@ -1296,9 +1276,10 @@ class paid(APIView):
                         where b."payDate" is not null\
                     """
                     cursor.execute(command)
-                elif (oUser.user_type.description == 'Employee'):
+                else:
                     command = """\
                         SELECT \
+                            c."id" ,\
                             c."name" ,\
                             c."lastname" ,\
                             a."confirmationDate" ,\
@@ -1323,11 +1304,14 @@ class paid(APIView):
                         where b."payDate" is not null and a.user_id = {0}\
                     """.format(oUser.id)
                     cursor.execute(command)
-                return Response(dictfetchall(cursor))    
+                if cursor.rowcount > 0:
+                    return Response(dictfetchall(cursor))    
+                else:
+                    return Response({"code": 200, "message": "No Data To Display", "data" : []}) 
             except token.DoesNotExist:
                 return Response({"code": 500, "message": "Invalid Token"}) 
         except user.DoesNotExist:
-            return Response({"code": 403, "message": "Not Authorized"})  
+            return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
 
 
@@ -1340,8 +1324,6 @@ def canCreate(request,endpoint):
             try:
                 if (oUser.user_type.description == 'Admin' or oUser.user_type.description == 'Owner'):
                     return True
-                elif (oUser.user_type.description == 'Employee'):
-                    return False
                 else:
                     return False
             except token.DoesNotExist:

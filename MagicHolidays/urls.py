@@ -44,6 +44,8 @@ urlpatterns = [
     path('monthlyTotals/', views.getMonthlyTotals.as_view(), name='monthlyTotals'),
     path('salesProduct/', views.salesByProduct.as_view(), name='salesByProduct'),
     path('salesCountry/', views.salesByCountry.as_view(), name='salesByCountry'),
+    path('salesProvider/', views.salesByProvider.as_view(), name='salesByProvider'),
+    path('salesEmployee/', views.salesByEmployee.as_view(), name='salesByEmployee'),
     path('widgets/', views.widgetsData.as_view(), name='widgets'),
     path('detailedSales/', views.detailedSales.as_view(), name='detailedTotals'),
     path('prepay/', views.prepaidViewSet.as_view(), name='prepay'),
@@ -51,7 +53,5 @@ urlpatterns = [
     path('deletePayment/', views.payDeleteViewSet.as_view(), name='deletePayment'),
     path('userPaid/', views.paid.as_view(), name='userPaid'),
     path('userToPay/', views.toPay.as_view(), name='userToPay'),
-    path('travelAlerts/', views.travelAlerts.as_view(), name='travelAlerts')
-
-    
+    path('travelAlerts/', views.travelAlerts.as_view(), name='travelAlerts')    
 ]
