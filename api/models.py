@@ -132,3 +132,6 @@ class token(models.Model):
     deleted_at = models.DateTimeField(null=True)    
     def __str__(self):
         return '%s' % (self.token)   
+
+class doneTasks(models.Model):
+    rez =  models.ForeignKey(rez, related_name='rel_task_rez', on_delete=models.PROTECT)

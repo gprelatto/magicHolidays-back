@@ -30,6 +30,7 @@ router.register(r'reservations', views.rezViewSet)
 router.register(r'payments', views.paymentViewSet)
 router.register(r'audit', views.auditViewSet)
 router.register(r'notifications', views.notificationViewSet)
+router.register(r'notificationsDone', views.doneTasksViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

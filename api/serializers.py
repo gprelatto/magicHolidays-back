@@ -17,6 +17,12 @@ class countrySerializer(serializers.HyperlinkedModelSerializer):
         model = country
         fields = ['id','description','lang']
 
+class doneTasksSerializer(serializers.HyperlinkedModelSerializer):
+    rez = serializers.PrimaryKeyRelatedField(queryset=rez.objects.all(), many=False)
+    class Meta:
+        model = doneTasks
+        fields = ['id','rez']
+
 class userSerializer(serializers.HyperlinkedModelSerializer):
     user_type = serializers.PrimaryKeyRelatedField(queryset=user_type.objects.all(), many=False)
     country = serializers.PrimaryKeyRelatedField(queryset=country.objects.all(), many=False)

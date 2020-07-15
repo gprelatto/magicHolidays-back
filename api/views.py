@@ -477,6 +477,22 @@ class paymentViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors)
 
 
+class doneTasksViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows taxes to be viewed or edited.
+    """
+    permission_classes = [checkAccess]
+    queryset = doneTasks.objects.all()
+    serializer_class = doneTasksSerializer
+
+    def create(self, request):
+        serializer = doneTasksSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
 class prepaidViewSet(APIView):
     """
     API endpoint that allows taxes to be viewed or edited.
