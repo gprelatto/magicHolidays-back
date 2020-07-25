@@ -724,7 +724,7 @@ class rezViewSet(viewsets.ModelViewSet):
             today = date.today()
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
-                if oRez.user.id == oUser.id:
+                if oRez.user.id == oUser.id or oUser.user_type.description == 'Admin':
                     obj_to_edit = rez.objects.get(id = pk)
                     obj_edited = obj_to_edit
                     obj_edited.deleted_at = today
