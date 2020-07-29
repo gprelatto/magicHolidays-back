@@ -135,3 +135,4 @@ class token(models.Model):
 
 class doneTasks(models.Model):
     rez =  models.ForeignKey(rez, related_name='rel_task_rez', on_delete=models.PROTECT)
+    message =  models.CharField(max_length=255)

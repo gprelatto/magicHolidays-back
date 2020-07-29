@@ -21,7 +21,7 @@ class doneTasksSerializer(serializers.HyperlinkedModelSerializer):
     rez = serializers.PrimaryKeyRelatedField(queryset=rez.objects.all(), many=False)
     class Meta:
         model = doneTasks
-        fields = ['id','rez']
+        fields = ['id','rez', 'message']
 
 class userSerializer(serializers.HyperlinkedModelSerializer):
     user_type = serializers.PrimaryKeyRelatedField(queryset=user_type.objects.all(), many=False)
