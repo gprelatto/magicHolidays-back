@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from datetime import date
 from django.shortcuts import get_object_or_404
 from django.db import connection
+from datetime import datetime
 
 class userTypeViewSet(viewsets.ModelViewSet):
     """
@@ -79,7 +80,7 @@ class notificationViewSet(viewsets.ModelViewSet):
             return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
-        queryset = notification.objects.all()
+        queryset = notification.objects.filter(date_from__lte = date.today() , date_to__gte = date.today())
         serializer = notificationSerializer(queryset, many=True)
         return Response(serializer.data)
 
