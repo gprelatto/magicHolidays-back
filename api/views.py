@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from datetime import date
 from django.shortcuts import get_object_or_404
 from django.db import connection
+from datetime import datetime
 
 class userTypeViewSet(viewsets.ModelViewSet):
     """
@@ -79,7 +80,7 @@ class notificationViewSet(viewsets.ModelViewSet):
             return Response({"code": 403, "message": "Not Authorized", "data" : []}) 
 
     def list(self, request):
-        queryset = notification.objects.all()
+        queryset = notification.objects.filter(date_from__lte = date.today() , date_to__gte = date.today())
         serializer = notificationSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -471,6 +472,22 @@ class paymentViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         serializer = paymentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
+class doneTasksViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows taxes to be viewed or edited.
+    """
+    permission_classes = [checkAccess]
+    queryset = doneTasks.objects.all()
+    serializer_class = doneTasksSerializer
+
+    def create(self, request):
+        serializer = doneTasksSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
