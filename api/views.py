@@ -511,7 +511,7 @@ class prepaidViewSet(APIView):
             try:
                 obj = token.objects.get(user = oUser.id,date = today,token = userToken)
                 if (obj.user.user_type.description == 'Admin'):
-                    queryset = rez.objects.filter(rel_payment_rez__isnull = True)
+                    queryset = rez.objects.filter(rel_payment_rez__isnull = True, deleted_at__isnull = True)
                     serializer = rezPrepaySerializer(queryset, many=True)
                     return Response(serializer.data)             
                 else:
