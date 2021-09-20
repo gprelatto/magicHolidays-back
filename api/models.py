@@ -99,7 +99,8 @@ class rez(models.Model):
     updated_at = models.DateTimeField(null=True)    
     deleted_at = models.DateTimeField(null=True)
     tickets_count = models.DecimalField(max_digits = 8,decimal_places = 2, null = True) 
-    people_count = models.DecimalField(max_digits = 8,decimal_places = 2, null = True) 
+    people_count = models.DecimalField(max_digits = 8,decimal_places = 2, null = True)
+    due_date = models.DateTimeField(null=True)
     def soft_delete(self):
         self.deleted_at = date.today()
         self.save()
